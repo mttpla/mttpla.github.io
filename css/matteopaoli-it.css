@@ -1,0 +1,99 @@
+body {
+    background-image: url(../imgs/backgrounds/java.jpg); 
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: 100% 100%;
+    background-color: transparent;
+    color: white;
+}
+
+h1{
+    position: absolute;
+    top: 5px;
+    left: 180px;
+}
+
+h3{
+    position: absolute;
+    top: 50px;
+    left: 180px;
+}
+
+
+
+div.me{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+    border: 10px solid white;
+    padding: 10px;
+    
+}
+
+div.myLinkGroup{
+    position: absolute;
+    top: 180px;
+    left: 20px;
+    width: 50px;
+    height: 200px;
+    border-radius: 5px;
+    border: 10px solid white;
+    padding: 10px;
+    text-align: center; 
+
+}
+div.myLinkItem{
+    padding-bottom: 25px;
+}
+
+img.myPic{
+    height: 100px ;
+    width: 100px;
+}
+
+img.mecoilLogo{
+    height: 50px ;
+    width: 100px;
+    
+}
+
+div.externalLinkGroup{
+	position: absolute;
+    top: 20px;
+    left: 75%;
+    width: 130px;
+    height: 100px;
+    border-radius: 5px;
+    padding: 10px;
+    border: 10px solid white; 
+    text-align: center;   
+}
+
+div.externalLinkItem{
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+div.lastUpdate{
+    position: absolute;
+    top: 94%;
+    left: 3%;
+    height: 100px;
+    padding: 10px;
+    font-weight: bold;    
+}
+
+a{ 
+    color: white;
+    
+}
+
+div.inline{
+    display: inline-block;
+}
+

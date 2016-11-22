@@ -1,0 +1,23 @@
+runtime: go
+api_version: go1
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /css 
+  static_dir: css
+
+- url: /imgs
+  static_dir: imgs
+
+- url: /js
+  static_dir: js
+
+- url: /engine/.*
+  script: _go_app
+
+- url: /.*
+  static_files: index.html
+  upload: index.html
