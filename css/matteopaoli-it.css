@@ -85,6 +85,15 @@ div.lastUpdate{
     font-weight: bold;    
 }
 
+div.copyright{
+    position: absolute;
+    top: 94%;
+    left: 33%;
+    height: 100px;
+    padding: 10px;
+    font-weight: bold;    
+}
+
 a{ 
     color: white;
     
