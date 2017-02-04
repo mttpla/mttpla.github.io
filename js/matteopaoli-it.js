@@ -12,13 +12,13 @@ $(document).ready(function () {
     var meImageArrayLength = meImageArray.length;
 
     var backgroundImageArray = new Array();
-    backgroundImageArray.push("url(../imgs/backgrounds/java.jpg)");
-    backgroundImageArray.push("url(../imgs/backgrounds/desktop_hibernate_1920x1200.jpg)");
-    backgroundImageArray.push("url(../imgs/backgrounds/desktop_jsfunit_1920x1200.jpg)");
-    backgroundImageArray.push("url(../imgs/backgrounds/desktop_richfaces_1920x1200.jpg)");
-    backgroundImageArray.push("url(../imgs/backgrounds/desktop_seam_1920x1200.jpg)");
-    backgroundImageArray.push("url(../imgs/backgrounds/desktop_tools_1920x1200.gif)");
-    backgroundImageArray.push("url(../imgs/backgrounds/wildfly_desktop_1920x1200.jpg)");
+//    backgroundImageArray.push("url(../imgs/backgrounds/java.jpg)");
+//    backgroundImageArray.push("url(../imgs/backgrounds/desktop_hibernate_1920x1200.jpg)");
+//    backgroundImageArray.push("url(../imgs/backgrounds/desktop_jsfunit_1920x1200.jpg)");
+//    backgroundImageArray.push("url(../imgs/backgrounds/desktop_richfaces_1920x1200.jpg)");
+//    backgroundImageArray.push("url(../imgs/backgrounds/desktop_seam_1920x1200.jpg)");
+//    backgroundImageArray.push("url(../imgs/backgrounds/desktop_tools_1920x1200.gif)");
+//    backgroundImageArray.push("url(../imgs/backgrounds/wildfly_desktop_1920x1200.jpg)");
     backgroundImageArray.push("url(../imgs/backgrounds/coffee.jpg)");
 
     backgroundImageArray.push("url(../imgs/backgrounds/python.png)");
@@ -55,7 +55,7 @@ $(document).ready(function () {
 	document.getElementById("myPic").src = meImageArray[0];
 	document.body.style.backgroundImage = backgroundImageArray[0];
     }else{
-	setInterval(changeBackground, 5000); //5 seconds
+	//setInterval(changeBackground, 5000); //5 seconds
 	setInterval(changeMeImage, 3000); //3 seconds
     }
 

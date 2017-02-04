@@ -1,5 +1,5 @@
 body {
-    background-image: url(../imgs/backgrounds/java.jpg); 
+    background-image: url(../imgs/backgrounds/coffee.jpg); 
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
@@ -17,6 +17,12 @@ h1{
 h3{
     position: absolute;
     top: 50px;
+    left: 180px;
+}
+
+div.CV{
+    position: absolute;
+    top: 100px;
     left: 180px;
 }
 
@@ -61,7 +67,7 @@ div.externalLinkGroup{
     top: 20px;
     left: 75%;
     width: 130px;
-    height: 230px;
+    height: 310px;
     border-radius: 5px;
     padding: 10px;
     border: 10px solid white; 
