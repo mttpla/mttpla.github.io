@@ -3,12 +3,13 @@
 $(document).ready(function () {
 
     var meImageArray = new Array();
+    meImageArray.push("./imgs/me/matteopaoli2018.jpg");
     meImageArray.push("./imgs/me/matteopaoli2016.jpg");
     meImageArray.push("./imgs/me/matteopaoli2015.jpg");
     meImageArray.push("./imgs/me/matteopaoli2013.jpg");
-    meImageArray.push("./imgs/me/matteopaoli2011.jpg");
-    meImageArray.push("./imgs/me/matteopaoli2011-cv.jpg");
-    meImageArray.push("./imgs/me/matteopaoli2009.jpg");
+    meImageArray.push("./imgs/me/matteopaoli2011.png");
+    meImageArray.push("./imgs/me/matteopaoli2011-cv.png");
+    meImageArray.push("./imgs/me/matteopaoli2009.png");
 
     var meImageArrayLength = meImageArray.length;
 
