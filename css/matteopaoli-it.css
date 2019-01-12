@@ -20,7 +20,7 @@ a.blueLink{
   height: 100%;
   font: normal 16px/26px Open Sans Condensed, sans-serif;
   color: #fff;
-  padding: 100px 20px 200px;
+  padding: 100px 220px 20px;
   box-sizing: border-box;
 }
 
@@ -124,6 +124,7 @@ div.me {
   padding: 10px;
 }
 div.myLinkGroup {
+  display: inline-block;
   position: absolute;
   top: 180px;
   left: 20px;
