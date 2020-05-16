@@ -10,7 +10,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
+    "github.com/gorilla/mux"
+    "google.golang.org/appengine"
 )
 
 //ServerInfo info printed in / page
@@ -43,11 +44,13 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	LogInit(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+    LogInit(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+    appengine.Main()
 	router := mux.NewRouter()
 	router.HandleFunc("/", HomeHandler)
 	router.NotFoundHandler = http.HandlerFunc(notFound)
 	Info.Println("Started")
 	log.Fatal(http.ListenAndServe(":8000", router))
+	
 
 }
