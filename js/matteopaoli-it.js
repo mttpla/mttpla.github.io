@@ -6,10 +6,10 @@ $(document).ready(function () {
     meImageArray.push("./imgs/me/matteopaoli2018.jpg");
     meImageArray.push("./imgs/me/matteopaoli2016.jpg");
     meImageArray.push("./imgs/me/matteopaoli2015.jpg");
-    meImageArray.push("./imgs/me/matteopaoli2013.jpg");
     meImageArray.push("./imgs/me/matteopaoli2011.png");
     meImageArray.push("./imgs/me/matteopaoli2011-cv.png");
     meImageArray.push("./imgs/me/matteopaoli2009.png");
+    meImageArray.push("./imgs/me/matteopaoli2019.png");
 
     var meImageArrayLength = meImageArray.length;
 
