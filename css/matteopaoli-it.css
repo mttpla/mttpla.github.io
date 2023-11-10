@@ -126,8 +126,8 @@ div.me {
 div.myLinkGroup {
   display: inline-block;
   position: absolute;
-  top: 180px;
-  left: 20px;
+  top: 20px;
+  left: calc(100% - 100px);
   width: 50px;
   height: 200px;
   border-radius: 5px;
@@ -145,7 +145,7 @@ img.myPic {
 
 div.lastLine {
   padding: 10px;
-  padding-top: 40px;
+  padding-top: 60px;
   position: relative;
   text-align: center;
   width: 100%;
