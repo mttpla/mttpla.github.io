@@ -11,6 +11,7 @@ $(document).ready(function () {
   meImageArray.push('./imgs/me/matteopaoli2019.png');
   meImageArray.push('./imgs/me/matteopaoli2022-06.jpg');
   meImageArray.push('./imgs/me/matteopaoli2022-08.jpg');
+  meImageArray.push('./imgs/me/matteopaoli2023-08.jpg');
 
   var meImageArrayLength = meImageArray.length;
 
