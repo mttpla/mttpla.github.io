@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoreTO · Service Info Explorer</title>
+  <link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Coreto Design Tokens ── */
+    :root {
+      --brown-000: #ece6dc;
+      --brown-50:  #f2eee7;
+      --brown-100: #e0d7c6;
+      --brown-200: #d4c8b0;
+      --brown-300: #c8b99a;
+      --brown-600: #56492f;
+      --brown-900: #403623;
+      --gray-150:  #f3f3f3;
+      --gray-200:  #edece9;
+      --gray-250:  #f8f6f2;
+      --gray-300:  #e4e4e4;
+      --gray-400:  #bbbab7;
+      --gray-500:  #9c9b98;
+      --gray-600:  #73726f;
+      --gray-700:  #5f5e5c;
+      --gray-800:  #403f3d;
+      --gray-900:  #1f1f1c;
+      --white:     #fff;
+      --black:     #000;
+      --positive:     #177849;
+      --positive-10:  #f7fdfa;
+      --positive-100: #cae4d6;
+      --negative:     #cd2222;
+      --negative-10:  #fae3e3;
+      --warning:      #ffc043;
+      --warning-10:   #fff3dc;
+      --radius: 8px;
+      --shadow: 0px 0px 24px rgba(71, 64, 47, 0.1);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      height: 100%;
+      font-family: 'Work Sans', sans-serif;
+      color: var(--gray-900);
+      background: var(--gray-250);
+      overflow: hidden;
+    }
+
+    /* ── App layout: sidebar + right ── */
+    #app { display: flex; height: 100vh; }
+
+    /* ── Right side (full width now) ── */
+    #right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* ── Top header (80px, white, bottom hairline) ── */
+    #header {
+      height: 80px;
+      flex-shrink: 0;
+      background: var(--white);
+      box-shadow: inset 0px -1px 0px var(--gray-300);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 0;
+    }
+    .header-title {
+      font-size: 22px;
+      line-height: 28px;
+      font-weight: 500;
+      color: var(--gray-900);
+    }
+    .header-subtitle {
+      font-size: 13px;
+      color: var(--gray-500);
+      font-weight: 400;
+      margin-left: 12px;
+      padding-left: 12px;
+      border-left: 1px solid var(--gray-300);
+    }
+    #header-meta {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .meta-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1px;
+    }
+    .meta-chip-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+    }
+    .meta-chip-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-800);
+    }
+
+    /* ── Content area ── */
+    #content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--gray-250);
+      overflow: hidden;
+      padding: 20px 20px 0 28px;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    /* ── Toolbar card ── */
+    #toolbar {
+      background: var(--white);
+      border: 1px solid var(--brown-100);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-end;
+      flex-shrink: 0;
+      box-shadow: var(--shadow);
+    }
+    .tg { display: flex; flex-direction: column; gap: 6px; }
+    .tg-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+    }
+    .tg-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .pr { display: flex; align-items: center; gap: 6px; }
+    .pr label { font-size: 13px; color: var(--gray-700); white-space: nowrap; }
+    .pr input[type="text"],
+    .pr input[type="number"] {
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--brown-300);
+      border-radius: var(--radius);
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      color: var(--gray-900);
+      background: var(--white);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .pr input:focus {
+      border-color: var(--brown-600);
+      box-shadow: 0 0 0 3px rgba(86, 73, 47, .12);
+    }
+    .pr input[type="number"] { width: 68px; }
+    .pr .unit { font-size: 13px; color: var(--gray-600); }
+
+    input[type="file"] {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      color: var(--gray-700);
+    }
+    input[type="file"]::file-selector-button {
+      height: 36px;
+      padding: 0 14px;
+      border: 1px solid var(--brown-300);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--brown-600);
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background .15s;
+    }
+    input[type="file"]::file-selector-button:hover { background: var(--brown-000); }
+
+    /* ── Buttons ── */
+    .btn {
+      height: 36px;
+      padding: 0 16px;
+      border: 1px solid var(--brown-300);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--brown-600);
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s, border-color .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover { background: var(--brown-000); border-color: var(--brown-200); }
+    .btn-primary { background: var(--brown-600); color: var(--white); border-color: var(--brown-600); }
+    .btn-primary:hover { background: var(--brown-900); border-color: var(--brown-900); }
+    .btn-sep { width: 1px; height: 22px; background: var(--brown-200); align-self: center; }
+
+    /* ── Collapsible panels container ── */
+    #panels-container {
+      background: var(--white);
+      border: 1px solid var(--brown-100);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    #panels-container.panels-all-hidden { display: none; }
+
+    .panel-block { padding: 12px 20px; }
+    .panel-block + .panel-block { border-top: 1px solid var(--brown-000); }
+    .panel-block.hidden { display: none; }
+    .panel-block-title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 8px;
+    }
+
+    /* ── Column toggles ── */
+    #columns-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+    .col-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--gray-800);
+      padding: 3px 10px 3px 7px;
+      border: 1px solid var(--gray-300);
+      border-radius: 100px;
+      transition: background .15s, border-color .15s;
+      user-select: none;
+    }
+    .col-toggle:has(input:checked) {
+      background: var(--brown-000);
+      border-color: var(--brown-300);
+      color: var(--brown-900);
+    }
+    .col-toggle input[type="checkbox"] { cursor: pointer; accent-color: var(--brown-600); }
+
+    /* ── Legend table ── */
+    #legend-table {
+      border-collapse: collapse;
+      font-size: 12px;
+      width: 100%;
+    }
+    #legend-table th,
+    #legend-table td {
+      border: 1px solid var(--gray-300);
+      padding: 5px 10px;
+      text-align: left;
+      line-height: 1.4;
+    }
+    #legend-table th {
+      background: var(--brown-000);
+      font-weight: 600;
+      color: var(--gray-800);
+      font-size: 11px;
+    }
+    #legend-table td:first-child { font-weight: 600; }
+    #legend-footer {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--gray-600);
+    }
+
+    /* ── Error banner ── */
+    #error-message {
+      background: var(--negative-10);
+      border: 1px solid #e8aaaa;
+      border-radius: var(--radius);
+      color: var(--negative);
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    #error-message.hidden { display: none; }
+
+    /* ── Table container ── */
+    #table-container {
+      flex: 1;
+      min-height: 0;
+      border: 1px solid var(--brown-100);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    #service-table { height: 100%; }
+
+    /* ── Tabulator overrides (Coreto palette) ── */
+    .tabulator {
+      border: none;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 13px;
+    }
+
+    /* Column header: lighter warm brown */
+    .tabulator .tabulator-header { background: var(--brown-600); border-bottom: 2px solid #3d3020; }
+    .tabulator .tabulator-header .tabulator-col {
+      background: var(--brown-600);
+      border-right: 1px solid #7a6040;
+    }
+    .tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover { background: #6b5535; }
+    .tabulator .tabulator-header .tabulator-col .tabulator-col-title {
+      color: var(--brown-000);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .tabulator .tabulator-header .tabulator-col .tabulator-col-sorter .tabulator-arrow {
+      border-top-color: rgba(236,230,220,.55);
+    }
+
+    /* Header filters — white background, dark text */
+    .tabulator .tabulator-header-filter input,
+    .tabulator .tabulator-header-filter select {
+      font-family: 'Work Sans', sans-serif;
+      font-size: 11px;
+      border-radius: 4px;
+      border: 1px solid rgba(236,230,220,.35);
+      background: rgba(255,255,255,.93);
+      color: var(--gray-800);
+      padding: 2px 6px;
+    }
+    .tabulator .tabulator-header-filter input::placeholder { color: var(--gray-400); }
+    .tabulator .tabulator-header-filter select option { color: var(--gray-900); background: var(--white); }
+
+    /* Top-calc row (counters as 2nd row under header) */
+    .tabulator .tabulator-header .tabulator-calcs-holder {
+      border-top: 2px solid #3d3020;
+    }
+    .tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row {
+      background: var(--brown-000) !important;
+    }
+    .tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row .tabulator-cell {
+      color: var(--brown-900) !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      padding: 5px 10px;
+      border-right: 1px solid var(--brown-200);
+    }
+
+    /* Data rows */
+    .tabulator .tabulator-row { background: var(--white); }
+    .tabulator .tabulator-row.tabulator-row-even { background: var(--brown-50); }
+    .tabulator .tabulator-row:hover { background: var(--brown-000) !important; }
+    .tabulator .tabulator-cell { padding: 6px 10px; border-right: 1px solid var(--gray-150); }
+
+    /* Cell status */
+    .cell-ok    { color: var(--positive)  !important; }
+    .cell-warn  { color: #7c5000          !important; background: var(--warning-10)  !important; }
+    .cell-error { color: var(--negative)  !important; background: var(--negative-10) !important; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Coreto-style layout: no sidebar, just right area -->
+  <div id="right" style="flex:1;display:flex;flex-direction:column;height:100%;overflow:hidden;">
+
+    <!-- Top header: 80px white, inset bottom shadow -->
+    <div id="header">
+      <span class="header-title">Service Info Explorer</span>
+      <span class="header-subtitle">service-info-gatherer</span>
+      <div id="header-meta">
+        <!-- populated by renderFileMeta() -->
+      </div>
+    </div>
+
+    <!-- Main content area -->
+    <div id="content">
+
+      <!-- Toolbar card -->
+      <div id="toolbar">
+        <div class="tg">
+          <div class="tg-label">JSON File</div>
+          <div class="tg-controls">
+            <input type="file" id="file-input" accept=".json">
+          </div>
+        </div>
+
+        <div class="tg">
+          <div class="tg-label">Target Versions</div>
+          <div class="tg-controls">
+            <div class="pr">
+              <label>Spring Boot lib:</label>
+              <input type="text" id="param-coreto-version" value="2.6.1" style="width:82px">
+            </div>
+            <div class="pr">
+              <label>React UI lib:</label>
+              <input type="text" id="param-ui-version" value="2.0.1" style="width:82px">
+            </div>
+          </div>
+        </div>
+
+        <div class="tg">
+          <div class="tg-label">Coverage Thresholds</div>
+          <div class="tg-controls">
+            <div class="pr">
+              <label>OK ≥</label>
+              <input type="number" id="param-cov-ok" value="70" min="0" max="100">
+              <span class="unit">%</span>
+            </div>
+            <div class="pr">
+              <label>Warn ≥</label>
+              <input type="number" id="param-cov-warn" value="60" min="0" max="100">
+              <span class="unit">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tg">
+          <div class="tg-label">Node (nvmrc)</div>
+          <div class="tg-controls">
+            <div class="pr">
+              <label>Min major ≥</label>
+              <input type="number" id="param-nvmrc-major" value="22" min="0" max="99">
+            </div>
+          </div>
+        </div>
+
+        <div class="tg">
+          <div class="tg-label">Docker &amp; URLs</div>
+          <div class="tg-controls">
+            <div class="pr">
+              <label>Docker OK keywords:</label>
+              <input type="text" id="param-docker-keywords"
+                     value="ibm-semeru-runtimes,redhat-nginx:1.26" style="width:240px">
+            </div>
+            <div class="pr">
+              <label>Bad URL pattern:</label>
+              <input type="text" id="param-bad-url" value="openshiftapps.com" style="width:165px">
+            </div>
+          </div>
+        </div>
+
+        <div class="tg">
+          <div class="tg-label">Actions</div>
+          <div class="tg-controls">
+            <button class="btn btn-primary" id="btn-apply">Apply</button>
+            <div class="btn-sep"></div>
+            <button class="btn" id="btn-reset-layout">Reset layout</button>
+            <button class="btn" id="btn-toggle-columns">Columns</button>
+            <button class="btn" id="btn-toggle-legend">Legend</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapsible panels (columns + legend) -->
+      <div id="panels-container" class="panels-all-hidden">
+        <div id="panel-columns" class="panel-block hidden">
+          <div class="panel-block-title">Show / hide columns</div>
+          <div id="columns-toggles"></div>
+        </div>
+        <div id="panel-legend" class="panel-block hidden">
+          <div class="panel-block-title">Legend</div>
+          <table id="legend-table">
+            <thead>
+              <tr><th>Column</th><th>✅</th><th>⚠️</th><th>❌</th><th>Note</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Env Status</td><td>prod</td><td>preprod only</td><td>not deployed</td><td>Highest environment where service is deployed.</td></tr>
+              <tr><td>coreto-common-lib</td><td>exact match with target</td><td>same major, different minor</td><td>major mismatch / missing</td><td>Configurable above.</td></tr>
+              <tr><td>common-ui-lib</td><td>^ same major (or exact)</td><td>same major, no ^</td><td>major mismatch / missing</td><td>Caret (^) pins the major version.</td></tr>
+              <tr><td>Docker Image</td><td>keyword matched</td><td>—</td><td>not approved</td><td>Keywords configurable above.</td></tr>
+              <tr><td>Sonar Gate</td><td>Gate OK</td><td>—</td><td>Gate ERROR</td><td>Overall SonarQube quality gate.</td></tr>
+              <tr><td>Coverage</td><td>≥ OK threshold</td><td>≥ Warn threshold</td><td>&lt; Warn threshold</td><td>Thresholds configurable above.</td></tr>
+              <tr><td>Log</td><td>no custom logback.xml</td><td>—</td><td>custom logback.xml present</td><td>Only for SPRINGBOOT services.</td></tr>
+            </tbody>
+          </table>
+          <div id="legend-footer">
+            Footer format for ✅/⚠️ columns: <code>✅ &lt;ok&gt; · ⚠️ &lt;warn&gt; / &lt;total with data&gt;</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error banner -->
+      <div id="error-message" class="hidden"></div>
+
+      <!-- Table -->
+      <div id="table-container">
+        <div id="service-table"></div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /right -->
+</div><!-- /app -->
+
+<script src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+<script>
+'use strict';
+
+// ════════════════════════════════════════════════════════════
+// APPLICATION STATE
+// ════════════════════════════════════════════════════════════
+
+const state = {
+  targetCoretoVersion:  '2.6.1',
+  targetUiVersion:      '2.0.1',
+  dockerOkKeywords:     ['ibm-semeru-runtimes', 'redhat-nginx:1.26'],
+  badUrlPattern:        'openshiftapps.com',
+  coverageOkThreshold:  70,
+  coverageWarnThreshold: 60,
+  nvmrcTargetMajor:     22,
+};
+
+let rawServices = [];
+let table = null;
+
+// ════════════════════════════════════════════════════════════
+// UTILITY FUNCTIONS
+// ════════════════════════════════════════════════════════════
+
+function parseSemver(v) {
+  const clean = String(v).replace(/^[v^~\s]+/, '');
+  const parts = clean.split('.').map(Number);
+  if (parts.some(isNaN)) throw new Error(`Unparseable version: ${v}`);
+  return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0];
+}
+
+/**
+ * Returns ✅, ⚠️, or ❌ for a version comparison.
+ * Caret prefix (^) pins the major: same major → ✅.
+ * No prefix: exact match → ✅, same major → ⚠️, else → ❌.
+ */
+function computeVersionMark(actual, target) {
+  if (!actual) return '❌';
+  try {
+    const hasCaret = actual.startsWith('^');
+    const a = parseSemver(actual);
+    const t = parseSemver(target);
+    if (hasCaret) return a[0] === t[0] ? '✅' : '❌';
+    if (a[0] === t[0] && a[1] === t[1] && a[2] === t[2]) return '✅';
+    if (a[0] === t[0]) return '⚠️';
+    return '❌';
+  } catch {
+    return '❌';
+  }
+}
+
+function imageLabel(fullPath) {
+  if (!fullPath) return '';
+  return fullPath.split('/').pop();
+}
+
+function countBadUrls(deps, links, pattern) {
+  if (!pattern) return 0;
+  let n = 0;
+  for (const d of (deps  || [])) { if (d?.url?.includes(pattern)) n++; }
+  for (const l of (links || [])) { if (l?.url?.includes(pattern)) n++; }
+  return n;
+}
+
+function isDockerOk(label, keywords) {
+  if (!label) return false;
+  const low = label.toLowerCase();
+  return keywords.some(k => k && low.includes(k.toLowerCase()));
+}
+
+function envStatusFromVersions(deployedVersions) {
+  if (!deployedVersions || typeof deployedVersions !== 'object') return '❌';
+  if ('prod'    in deployedVersions) return '✅';
+  if ('preprod' in deployedVersions) return '⚠️';
+  return '❌';
+}
+
+function extractFileDate(meta) {
+  const ts = meta?.completed_at || meta?.generated_at || '';
+  if (!ts) return '';
+  try   { return new Date(ts).toISOString().slice(0, 10); }
+  catch { return ts.slice(0, 10); }
+}
+
+/** Extracts the major Node version from an nvmrc string (e.g. "22.11.0" → 22, "lts/iron" → null). */
+function nvmrcMajor(nvmrc) {
+  if (!nvmrc) return null;
+  const m = String(nvmrc).match(/^(\d+)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+// ════════════════════════════════════════════════════════════
+// DATA TRANSFORMATION
+// ════════════════════════════════════════════════════════════
+
+/**
+ * Converts raw service objects into flat rows for Tabulator.
+ * Filters out orphan pods (no ado_project).
+ * All state-dependent fields are recomputed on each call.
+ */
+function buildRows(services, st) {
+  return services
+    .filter(s => s.ado_project != null)
+    .map(s => {
+      const deps  = Array.isArray(s.dependencies)   ? s.dependencies   : [];
+      const links = Array.isArray(s.hardcoded_links) ? s.hardcoded_links : [];
+      const sonar = (s.sonarqube && typeof s.sonarqube === 'object') ? s.sonarqube : {};
+      const label = imageLabel(s.docker_base_image || '');
+
+      return {
+        name:            s.name || '',
+        type:            s.type || '',
+        env_status:      envStatusFromVersions(s.deployed_versions),
+        spring_ver:      s['com.coreto.common.version'] || '',
+        react_ver:       s['@alpitour/common-ui-lib.version'] || '',
+        nvmrc:           s.nvmrc || '',
+        docker_label:    label,
+        dep_count:       deps.length,
+        hardcoded_count: links.length,
+        bad_urls_count:  countBadUrls(deps, links, st.badUrlPattern),
+        sonar_alert:     sonar.alert_status || '',
+        coverage:        sonar.coverage ?? null,
+        has_logback:     'logback_xml' in s,
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// ════════════════════════════════════════════════════════════
+// COLUMN DEFINITIONS
+// Formatters and bottomCalcs close over `state`, so they always
+// reflect the current parameter values without reinitialising.
+// ════════════════════════════════════════════════════════════
+
+const COLUMN_DEFS = [
+  {
+    title: 'Service',
+    field: 'name',
+    sorter: 'string',
+    headerFilter: true,
+    minWidth: 220,
+    formatter(cell) {
+      return `<strong>${cell.getValue()}</strong>`;
+    },
+    topCalc(values) {
+      return `tot: ${values.length}`;
+    },
+  },
+  {
+    title: 'Type',
+    field: 'type',
+    sorter: 'string',
+    headerFilter: true,
+    width: 105,
+  },
+  {
+    title: 'Env Status',
+    field: 'env_status',
+    sorter: 'string',
+    headerFilter: 'select',
+    headerFilterParams: {
+      values: ['', '✅', '⚠️', '❌'],
+    },
+    headerFilterEmptyCheck: v => v === '',
+    width: 110,
+    hozAlign: 'center',
+    formatter(cell) {
+      const v  = cell.getValue();
+      const el = cell.getElement();
+      el.classList.remove('cell-ok', 'cell-warn', 'cell-error');
+      if (v === '✅') el.classList.add('cell-ok');
+      else if (v === '❌') el.classList.add('cell-error');
+      return v;
+    },
+    topCalc(values, data) {
+      const ok   = values.filter(v => v === '✅').length;
+      const warn = values.filter(v => v === '⚠️').length;
+      return `✅ ${ok} · ⚠️ ${warn} / ${data.length}`;
+    },
+  },
+  {
+    title: 'coreto-common-lib',
+    field: 'spring_ver',
+    sorter: 'string',
+    headerFilter: true,
+    width: 165,
+    formatter(cell) {
+      const row = cell.getRow().getData();
+      const el  = cell.getElement();
+      el.classList.remove('cell-ok', 'cell-warn', 'cell-error');
+      if (row.type !== 'SPRINGBOOT') return '';
+      const ver  = cell.getValue();
+      const mark = computeVersionMark(ver, state.targetCoretoVersion);
+      if (mark === '✅') el.classList.add('cell-ok');
+      else if (mark === '⚠️') el.classList.add('cell-warn');
+      else el.classList.add('cell-error');
+      return `${mark} ${ver}`;
+    },
+    topCalc(_values, data) {
+      const sb = data.filter(d => d.type === 'SPRINGBOOT');
+      if (!sb.length) return '—';
+      const ok   = sb.filter(d => computeVersionMark(d.spring_ver, state.targetCoretoVersion) === '✅').length;
+      const warn = sb.filter(d => computeVersionMark(d.spring_ver, state.targetCoretoVersion) === '⚠️').length;
+      return `✅ ${ok} · ⚠️ ${warn} / ${sb.length}`;
+    },
+  },
+  {
+    title: 'common-ui-lib',
+    field: 'react_ver',
+    sorter: 'string',
+    headerFilter: true,
+    width: 150,
+    formatter(cell) {
+      const row = cell.getRow().getData();
+      const el  = cell.getElement();
+      el.classList.remove('cell-ok', 'cell-warn', 'cell-error');
+      if (row.type !== 'REACT') return '';
+      const ver  = cell.getValue();
+      const mark = computeVersionMark(ver, state.targetUiVersion);
+      if (mark === '✅') el.classList.add('cell-ok');
+      else if (mark === '⚠️') el.classList.add('cell-warn');
+      else el.classList.add('cell-error');
+      return `${mark} ${ver}`;
+    },
+    topCalc(_values, data) {
+      const rc = data.filter(d => d.type === 'REACT');
+      if (!rc.length) return '—';
+      const ok   = rc.filter(d => computeVersionMark(d.react_ver, state.targetUiVersion) === '✅').length;
+      const warn = rc.filter(d => computeVersionMark(d.react_ver, state.targetUiVersion) === '⚠️').length;
+      return `✅ ${ok} · ⚠️ ${warn} / ${rc.length}`;
+    },
+  },
+  {
+    title: 'Node (nvmrc)',
+    field: 'nvmrc',
+    sorter: 'string',
+    headerFilter: true,
+    width: 125,
+    formatter(cell) {
+      const row = cell.getRow().getData();
+      const el  = cell.getElement();
+      el.classList.remove('cell-ok', 'cell-error');
+      if (row.type !== 'REACT') return '';
+      const val = cell.getValue();
+      if (!val) return '';
+      const major = nvmrcMajor(val);
+      if (major === null) return val;               // LTS alias: show as-is, no icon
+      if (major >= state.nvmrcTargetMajor) { el.classList.add('cell-ok'); return `✅ ${val}`; }
+      el.classList.add('cell-error');
+      return `❌ ${val}`;
+    },
+    topCalc(_values, data) {
+      const rc = data.filter(d => d.type === 'REACT' && d.nvmrc);
+      if (!rc.length) return '—';
+      const ok = rc.filter(d => {
+        const m = nvmrcMajor(d.nvmrc);
+        return m !== null && m >= state.nvmrcTargetMajor;
+      }).length;
+      return `✅ ${ok} / ${rc.length}`;
+    },
+  },
+  {
+    title: 'Docker Image',
+    field: 'docker_label',
+    sorter: 'string',
+    headerFilter: true,
+    minWidth: 200,
+    formatter(cell) {
+      const label = cell.getValue();
+      const el    = cell.getElement();
+      el.classList.remove('cell-ok');
+      if (!label) return '';
+      const ok = isDockerOk(label, state.dockerOkKeywords);
+      if (ok) el.classList.add('cell-ok');
+      return ok ? `✅ ${label}` : label;
+    },
+    topCalc(_values, data) {
+      const ok = data.filter(d => isDockerOk(d.docker_label, state.dockerOkKeywords)).length;
+      return `${ok}/${data.length}`;
+    },
+  },
+  {
+    title: 'Deps',
+    field: 'dep_count',
+    sorter: 'number',
+    headerFilter: false,
+    width: 60,
+    hozAlign: 'center',
+    topCalc: 'sum',
+  },
+  {
+    title: 'Hardcoded',
+    field: 'hardcoded_count',
+    sorter: 'number',
+    headerFilter: false,
+    width: 88,
+    hozAlign: 'center',
+    topCalc: 'sum',
+  },
+  {
+    title: 'Bad URLs',
+    field: 'bad_urls_count',
+    sorter: 'number',
+    headerFilter: false,
+    width: 82,
+    hozAlign: 'center',
+    formatter(cell) {
+      const v  = cell.getValue();
+      const el = cell.getElement();
+      el.classList.remove('cell-warn');
+      if (v > 0) el.classList.add('cell-warn');
+      return v;
+    },
+    topCalc: 'sum',
+  },
+  {
+    title: 'Sonar Gate',
+    field: 'sonar_alert',
+    sorter: 'string',
+    headerFilter: 'select',
+    headerFilterParams: { values: ['', 'OK', 'ERROR'] },
+    headerFilterEmptyCheck: v => v === '',
+    width: 100,
+    hozAlign: 'center',
+    formatter(cell) {
+      const v  = cell.getValue();
+      const el = cell.getElement();
+      el.classList.remove('cell-ok', 'cell-error');
+      if (v === 'OK')    { el.classList.add('cell-ok');    return '✅'; }
+      if (v === 'ERROR') { el.classList.add('cell-error'); return '❌'; }
+      return '';
+    },
+    topCalc(_values, data) {
+      const wd = data.filter(d => d.sonar_alert !== '');
+      const ok = wd.filter(d => d.sonar_alert === 'OK').length;
+      return `${ok}/${wd.length}`;
+    },
+  },
+  {
+    title: 'Coverage',
+    field: 'coverage',
+    sorter: 'number',
+    headerFilter: false,
+    width: 112,
+    hozAlign: 'center',
+    formatter(cell) {
+      const v  = cell.getValue();
+      const el = cell.getElement();
+      el.classList.remove('cell-ok', 'cell-warn', 'cell-error');
+      if (v === null || v === undefined) return '';
+      const icon = v >= state.coverageOkThreshold   ? '✅'
+                 : v >= state.coverageWarnThreshold  ? '⚠️' : '❌';
+      if (icon === '✅') el.classList.add('cell-ok');
+      else if (icon === '⚠️') el.classList.add('cell-warn');
+      else el.classList.add('cell-error');
+      return `${icon} ${v.toFixed(1)}%`;
+    },
+    topCalc(_values, data) {
+      const wd = data.filter(d => d.coverage !== null && d.coverage !== undefined);
+      if (!wd.length) return '—';
+      const ok   = wd.filter(d => d.coverage >= state.coverageOkThreshold).length;
+      const warn = wd.filter(d => d.coverage >= state.coverageWarnThreshold && d.coverage < state.coverageOkThreshold).length;
+      return `✅ ${ok} · ⚠️ ${warn} / ${wd.length}`;
+    },
+  },
+  {
+    title: 'Log',
+    field: 'has_logback',
+    sorter: 'boolean',
+    headerFilter: false,
+    width: 60,
+    hozAlign: 'center',
+    formatter(cell) {
+      const row = cell.getRow().getData();
+      const el  = cell.getElement();
+      el.classList.remove('cell-ok', 'cell-error');
+      if (row.type !== 'SPRINGBOOT') return '';
+      if (cell.getValue()) { el.classList.add('cell-error'); return '❌'; }
+      el.classList.add('cell-ok');
+      return '✅';
+    },
+    topCalc(_values, data) {
+      const sb = data.filter(d => d.type === 'SPRINGBOOT');
+      if (!sb.length) return '—';
+      const ok = sb.filter(d => !d.has_logback).length;
+      return `${ok}/${sb.length}`;
+    },
+  },
+];
+
+// ════════════════════════════════════════════════════════════
+// TABLE MANAGEMENT
+// ════════════════════════════════════════════════════════════
+
+function initTable(rows) {
+  if (table) { table.destroy(); table = null; }
+  table = new Tabulator('#service-table', {
+    data: rows,
+    layout: 'fitColumns',
+    movableColumns: true,
+    resizableColumns: true,
+    columns: COLUMN_DEFS,
+    height: '100%',
+    placeholder: 'Upload a JSON file to explore services.',
+    renderHorizontal: 'virtual',
+  });
+}
+
+function refreshTable() {
+  if (!table || !rawServices.length) return;
+  table.setData(buildRows(rawServices, state));
+}
+
+// ════════════════════════════════════════════════════════════
+// FILE METADATA DISPLAY
+// ════════════════════════════════════════════════════════════
+
+function renderFileMeta(meta) {
+  const date  = extractFileDate(meta);
+  const ns    = meta.namespace    || '';
+  const env   = meta.environment  || '';
+  const total = meta.total_services != null ? String(meta.total_services) : '';
+  const by    = meta.executed_by  || '';
+
+  const chips = [
+    date  && { label: 'Date',      value: date },
+    ns    && { label: 'Namespace', value: ns + (env ? ` (${env})` : '') },
+    total && { label: 'Services',  value: total },
+    by    && { label: 'Author',    value: by },
+  ].filter(Boolean);
+
+  const container = document.getElementById('header-meta');
+  container.innerHTML = chips.map(c => `
+    <div class="meta-chip">
+      <span class="meta-chip-label">${c.label}</span>
+      <span class="meta-chip-value">${c.value}</span>
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// COLUMN VISIBILITY CONTROLS
+// ════════════════════════════════════════════════════════════
+
+function buildColumnToggles() {
+  const container = document.getElementById('columns-toggles');
+  container.innerHTML = '';
+
+  COLUMN_DEFS.forEach(col => {
+    const lbl = document.createElement('label');
+    lbl.className = 'col-toggle';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = true;
+    cb.dataset.field = col.field;
+    cb.addEventListener('change', () => {
+      if (!table) return;
+      cb.checked ? table.showColumn(col.field) : table.hideColumn(col.field);
+    });
+    lbl.appendChild(cb);
+    lbl.appendChild(document.createTextNode(' ' + col.title));
+    container.appendChild(lbl);
+  });
+}
+
+function syncPanelsContainer() {
+  const colBlock = document.getElementById('panel-columns');
+  const legBlock = document.getElementById('panel-legend');
+  const container = document.getElementById('panels-container');
+  const bothHidden = colBlock.classList.contains('hidden') && legBlock.classList.contains('hidden');
+  container.classList.toggle('panels-all-hidden', bothHidden);
+}
+
+function togglePanel(blockId) {
+  document.getElementById(blockId).classList.toggle('hidden');
+  syncPanelsContainer();
+}
+
+// ════════════════════════════════════════════════════════════
+// ERROR HANDLING
+// ════════════════════════════════════════════════════════════
+
+function showError(msg) {
+  const el = document.getElementById('error-message');
+  el.textContent = `⚠️  ${msg}`;
+  el.classList.remove('hidden');
+}
+
+function clearError() {
+  const el = document.getElementById('error-message');
+  el.textContent = '';
+  el.classList.add('hidden');
+}
+
+// ════════════════════════════════════════════════════════════
+// FILE LOADING
+// ════════════════════════════════════════════════════════════
+
+function loadFile(file) {
+  if (!file) return;
+  clearError();
+
+  const reader = new FileReader();
+  reader.onerror = () => showError('Error reading the file.');
+  reader.onload = e => {
+    let data;
+    try {
+      data = JSON.parse(e.target.result);
+    } catch (err) {
+      showError(`Invalid JSON — ${err.message}`);
+      return;
+    }
+
+    if (!data || typeof data !== 'object') {
+      showError('Unexpected format: root must be a JSON object.');
+      return;
+    }
+    const services = data.services;
+    if (!Array.isArray(services)) {
+      showError('Missing "services" array in JSON.');
+      return;
+    }
+    if (services.length === 0) {
+      showError('The "services" array is empty.');
+      return;
+    }
+
+    rawServices = services;
+    if (data.metadata) renderFileMeta(data.metadata);
+
+    const rows = buildRows(rawServices, state);
+    if (rows.length === 0) {
+      showError('No tracked services found — all entries are orphan pods (missing ado_project).');
+    }
+
+    initTable(rows);
+    buildColumnToggles();
+  };
+  reader.readAsText(file);
+}
+
+// ════════════════════════════════════════════════════════════
+// STATE UPDATE FROM UI
+// ════════════════════════════════════════════════════════════
+
+function readParamsFromUI() {
+  state.targetCoretoVersion   = document.getElementById('param-coreto-version').value.trim() || '2.6.1';
+  state.targetUiVersion       = document.getElementById('param-ui-version').value.trim()     || '2.0.1';
+  state.badUrlPattern         = document.getElementById('param-bad-url').value.trim();
+  state.coverageOkThreshold   = parseFloat(document.getElementById('param-cov-ok').value)   || 70;
+  state.coverageWarnThreshold = parseFloat(document.getElementById('param-cov-warn').value)  || 60;
+  state.nvmrcTargetMajor      = parseInt(document.getElementById('param-nvmrc-major').value, 10) || 22;
+  const raw = document.getElementById('param-docker-keywords').value.trim();
+  state.dockerOkKeywords = raw.split(',').map(k => k.trim()).filter(Boolean);
+}
+
+// ════════════════════════════════════════════════════════════
+// EVENT BINDING
+// ════════════════════════════════════════════════════════════
+
+function bindEvents() {
+  document.getElementById('file-input').addEventListener('change', e => {
+    loadFile(e.target.files[0]);
+  });
+
+  document.getElementById('btn-apply').addEventListener('click', () => {
+    readParamsFromUI();
+    refreshTable();
+  });
+
+  document.getElementById('btn-reset-layout').addEventListener('click', () => {
+    if (!rawServices.length) return;
+    readParamsFromUI();
+    initTable(buildRows(rawServices, state));
+    buildColumnToggles();
+  });
+
+  document.getElementById('btn-toggle-columns').addEventListener('click', () => {
+    togglePanel('panel-columns');
+  });
+
+  document.getElementById('btn-toggle-legend').addEventListener('click', () => {
+    togglePanel('panel-legend');
+  });
+
+  // Apply params on Enter key from any param input
+  document.querySelectorAll('#toolbar input[type="text"], #toolbar input[type="number"]')
+    .forEach(inp => inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { readParamsFromUI(); refreshTable(); }
+    }));
+}
+
+// ════════════════════════════════════════════════════════════
+// ENTRY POINT
+// ════════════════════════════════════════════════════════════
+
+bindEvents();
+initTable([]);
+buildColumnToggles();
+</script>
+</body>
+</html>
