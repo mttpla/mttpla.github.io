@@ -70,6 +70,12 @@ function processJsonDocument(text, fileName) {
     if (!detected.datasets.length) {
         handleLoadError(
             "No top-level arrays detected. Provide a root array or a root object containing one or more first-level arrays.",
+            {
+                keepOriginalJson: true,
+                originalJson: root,
+                jsonTreeCollapsed: false,
+                fileName: fileName,
+            },
         );
         return;
     }
@@ -93,8 +99,28 @@ function processJsonDocument(text, fileName) {
     rebuildDatasetsFromRaw();
     renderSelectedFileName();
 }
-function handleLoadError(message) {
+function handleLoadError(message, options) {
+    var opts = options || {};
+    var keepOriginalJson = Boolean(opts.keepOriginalJson);
+    var originalJson = keepOriginalJson
+        ? opts.originalJson || null
+        : null;
+    var jsonTreeCollapsed =
+        typeof opts.jsonTreeCollapsed === "boolean"
+            ? opts.jsonTreeCollapsed
+            : true;
+
+    if (typeof opts.fileName === "string") {
+        state.fileName = opts.fileName;
+    }
+
     resetLoadedDocument(false);
+
+    if (keepOriginalJson) {
+        state.originalJson = originalJson;
+        state.ui.jsonTreeCollapsed = jsonTreeCollapsed;
+    }
+
     state.error = message;
     state.ui.settingsDirty = true;
     renderMessages();
