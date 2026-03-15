@@ -1,0 +1,232 @@
+"use strict";
+
+// BOOTSTRAP AND EVENT HANDLERS
+
+initializeApp();
+
+function initializeApp() {
+    bindEvents();
+    renderSelectedFileName();
+    renderMessages();
+    renderSummarySection();
+    renderMetadataSection();
+    renderJsonTreeSection();
+    renderSettingsDrawer();
+    renderDatasets();
+    renderLoadingState();
+    renderFooterMetadata();
+    updateControlState();
+}
+function bindEvents() {
+    ui.fileInput.addEventListener("change", handleFileSelection);
+    ui.globalSearch.addEventListener("input", handleGlobalSearch);
+    ui.settingsButton.addEventListener(
+        "click",
+        toggleSettingsDrawer,
+    );
+    ui.closeSettingsButton.addEventListener(
+        "click",
+        closeSettingsDrawer,
+    );
+    ui.drawerBackdrop.addEventListener(
+        "click",
+        closeSettingsDrawer,
+    );
+    ui.resetButton.addEventListener(
+        "click",
+        handleResetConfiguration,
+    );
+    ui.exportButton.addEventListener("click", handleExportCsv);
+    ui.summaryToggle.addEventListener(
+        "click",
+        toggleSummarySection,
+    );
+    ui.metadataToggle.addEventListener(
+        "click",
+        toggleMetadataSection,
+    );
+    ui.jsonTreeToggle.addEventListener(
+        "click",
+        toggleJsonTreeSection,
+    );
+    ui.applyDepthButton.addEventListener(
+        "click",
+        handleApplyFlattenDepth,
+    );
+    ui.applyPageSizeButton.addEventListener(
+        "click",
+        handleApplyPageSize,
+    );
+    ui.settingsDatasets.addEventListener(
+        "change",
+        handleSettingsChange,
+    );
+    document.addEventListener("keydown", handleKeydown);
+}
+function handleSettingsChange(event) {
+    var target = event.target;
+    var datasetId = target.getAttribute("data-dataset-id");
+    var field = target.getAttribute("data-field");
+    var action = target.getAttribute("data-action");
+    var datasetState = getDatasetById(datasetId);
+
+    if (
+        !datasetState ||
+        !field ||
+        !datasetState.columnRegistry[field]
+    ) {
+        return;
+    }
+
+    if (action === "visible") {
+        var nextVisible = Boolean(target.checked);
+        runBlockingTask(
+            "Updating columns",
+            "Applying the new column visibility to the dataset.",
+            function () {
+                datasetState.columnRegistry[field].visible =
+                    nextVisible;
+                createOrRefreshTable(datasetState, false);
+                syncPrimaryState();
+            },
+        );
+        return;
+    }
+
+    if (action === "aggregation") {
+        var nextAggregation = target.value;
+        runBlockingTask(
+            "Updating aggregations",
+            "Refreshing table calculations for the selected column.",
+            function () {
+                datasetState.columnRegistry[field].aggregation =
+                    nextAggregation;
+                createOrRefreshTable(datasetState, false);
+                syncPrimaryState();
+            },
+        );
+    }
+}
+function handleGlobalSearch(event) {
+    state.searchTerm = event.target.value || "";
+    applyGlobalSearchFilter();
+}
+function handleApplyFlattenDepth() {
+    var rawValue = Number(ui.flattenDepthInput.value);
+    if (!Number.isFinite(rawValue)) {
+        ui.flattenDepthInput.value = String(
+            state.settings.flattenDepth,
+        );
+        return;
+    }
+
+    var nextDepth = clamp(Math.round(rawValue), 1, 8);
+    ui.flattenDepthInput.value = String(nextDepth);
+
+    if (!state.rawDatasets.length) {
+        state.settings.flattenDepth = nextDepth;
+        renderSummarySection();
+        return;
+    }
+
+    if (state.settings.flattenDepth === nextDepth) {
+        return;
+    }
+
+    state.settings.flattenDepth = nextDepth;
+    runBlockingTask(
+        "Rebuilding schema",
+        "Applying the new flatten depth to all datasets.",
+        function () {
+            rebuildDatasetsFromRaw();
+        },
+    );
+}
+function handleApplyPageSize() {
+    var nextSize = Number(ui.pageSizeSelect.value);
+
+    if (!Number.isFinite(nextSize) || nextSize <= 0) {
+        ui.pageSizeSelect.value = String(state.settings.pageSize);
+        return;
+    }
+
+    nextSize = Math.round(nextSize);
+
+    if (state.settings.pageSize === nextSize) {
+        return;
+    }
+
+    state.settings.pageSize = nextSize;
+
+    if (!state.datasets.length) {
+        renderSummarySection();
+        return;
+    }
+
+    runBlockingTask(
+        "Updating pagination",
+        "Applying the new page size to all rendered tables.",
+        function () {
+            state.datasets.forEach(function (datasetState) {
+                if (datasetState.table) {
+                    datasetState.table.setPageSize(nextSize);
+                    datasetState.table.setPage(1);
+                    datasetState.table.setHeight(
+                        computeDatasetTableMaxHeight(datasetState) +
+                            "px",
+                    );
+                    datasetState.table.redraw(true);
+                }
+            });
+            renderSummarySection();
+        },
+    );
+}
+function handleResetConfiguration() {
+    if (!state.rawDatasets.length) {
+        return;
+    }
+
+    state.searchTerm = "";
+    state.settings.flattenDepth = DEFAULT_FLATTEN_DEPTH;
+    state.settings.pageSize = DEFAULT_PAGE_SIZE;
+    state.ui.summaryCollapsed = true;
+    state.ui.metadataCollapsed = false;
+    ui.globalSearch.value = "";
+    ui.flattenDepthInput.value = String(DEFAULT_FLATTEN_DEPTH);
+    ui.pageSizeSelect.value = String(DEFAULT_PAGE_SIZE);
+    runBlockingTask(
+        "Resetting configuration",
+        "Restoring default schema and table settings.",
+        function () {
+            rebuildDatasetsFromRaw();
+        },
+    );
+}
+function handleExportCsv() {
+    var exportable = state.datasets.filter(function (datasetState) {
+        return Boolean(datasetState.table);
+    });
+
+    if (!exportable.length) {
+        return;
+    }
+
+    var baseName = buildExportBaseName(state.fileName || "data");
+
+    exportable.forEach(function (datasetState, index) {
+        window.setTimeout(function () {
+            if (datasetState.table) {
+                datasetState.table.download(
+                    "csv",
+                    baseName +
+                        "-" +
+                        sanitizeFilePart(datasetState.name) +
+                        ".csv",
+                );
+            }
+        }, index * 140);
+    });
+}
+
+// HELPERS

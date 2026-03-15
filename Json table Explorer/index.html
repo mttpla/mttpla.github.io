@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JSON Table Explorer</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css"
+            rel="stylesheet"
+        />
+        <link href="assets/styles/app.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="app">
+            <header class="topbar">
+                <div class="brand">
+                    <div class="brand-title">JSON Table Explorer</div>
+                    <div class="brand-subtitle">
+                        browser-only technical viewer for arbitrary JSON
+                    </div>
+                </div>
+
+                <div class="topbar-controls">
+                    <div class="control-stack">
+                        <span class="control-label">JSON Upload</span>
+                        <div class="control-row">
+                            <input
+                                class="file-input-native"
+                                type="file"
+                                id="file-input"
+                                accept=".json,application/json"
+                            />
+                            <label class="btn" for="file-input"
+                                >Choose File</label
+                            >
+                            <span class="file-name" id="file-name"
+                                >No file selected</span
+                            >
+                        </div>
+                    </div>
+
+                    <div class="control-stack search-stack">
+                        <label class="control-label" for="global-search"
+                            >Global Search</label
+                        >
+                        <input
+                            class="text-input"
+                            id="global-search"
+                            type="text"
+                            placeholder="Search across all detected columns"
+                            disabled
+                        />
+                    </div>
+
+                    <div class="control-stack">
+                        <span class="control-label">Actions</span>
+                        <div class="control-row">
+                            <button
+                                class="btn"
+                                id="settings-button"
+                                type="button"
+                            >
+                                Settings
+                            </button>
+                            <button
+                                class="btn"
+                                id="reset-button"
+                                type="button"
+                                disabled
+                            >
+                                Reset Configuration
+                            </button>
+                            <button
+                                class="btn btn-primary"
+                                id="export-button"
+                                type="button"
+                                disabled
+                            >
+                                Export CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div id="messages"></div>
+
+            <section class="section-panel" id="summary-section" hidden>
+                <button
+                    class="section-toggle"
+                    id="summary-toggle"
+                    type="button"
+                    aria-expanded="false"
+                >
+                    <span class="section-title">Overview</span>
+                    <span class="section-inline" id="summary-inline"></span>
+                    <span class="section-icon" id="summary-icon">+</span>
+                </button>
+                <div class="section-body" id="summary-body">
+                    <div class="summary-grid" id="summary-grid"></div>
+                </div>
+            </section>
+
+            <section class="section-panel" id="metadata-section" hidden>
+                <button
+                    class="section-toggle"
+                    id="metadata-toggle"
+                    type="button"
+                    aria-expanded="true"
+                >
+                    <span class="section-title">Document Metadata</span>
+                    <span class="section-inline" id="metadata-inline"></span>
+                    <span class="section-icon" id="metadata-icon">-</span>
+                </button>
+                <div class="section-body" id="metadata-body">
+                    <div class="metadata-wrap">
+                        <div class="metadata-grid" id="metadata-grid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <main class="content-shell">
+                <div class="datasets-container" id="datasets-container"></div>
+                <section class="section-panel json-tree-panel" id="json-tree-section" hidden>
+                    <button
+                        class="section-toggle"
+                        id="json-tree-toggle"
+                        type="button"
+                        aria-expanded="false"
+                    >
+                        <span class="section-title">Original JSON</span>
+                        <span class="section-inline" id="json-tree-inline"></span>
+                        <span class="section-icon" id="json-tree-icon">+</span>
+                    </button>
+                    <div class="section-body" id="json-tree-body">
+                        <div class="json-tree-wrap" id="json-tree-content"></div>
+                    </div>
+                </section>
+                <div class="empty-state" id="empty-state">
+                    Upload a JSON file to start exploring its top-level arrays
+                    as independent technical tables.
+                </div>
+            </main>
+
+            <footer class="footer">
+                <div class="footer-line">
+                    <div class="copyright" id="copyright-label">
+                        Copyright 2026 Matteo Paoli
+                    </div>
+                    <div class="footer-meta">
+                        <span>Commit</span>
+                        <a
+                            class="footer-link is-disabled"
+                            id="lasthtmlurl"
+                            href="#"
+                            target="_blank"
+                            rel="noreferrer noopener"
+                        >
+                            <code class="lastcommit">n/a</code>
+                        </a>
+                        <span class="footer-separator">·</span>
+                        <span class="lastdate">n/a</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+        <aside class="settings-drawer" id="settings-drawer" aria-hidden="true">
+            <div class="drawer-header">
+                <div class="drawer-title-group">
+                    <h2 class="drawer-title">Settings</h2>
+                    <p class="drawer-subtitle">
+                        compact technical controls for schema, columns and
+                        aggregations
+                    </p>
+                </div>
+                <button
+                    class="btn btn-small"
+                    id="close-settings-button"
+                    type="button"
+                >
+                    Close
+                </button>
+            </div>
+
+            <div class="drawer-body">
+                <section class="drawer-section">
+                    <div class="drawer-section-head">
+                        <h3 class="drawer-section-title">Global</h3>
+                        <span class="drawer-note"
+                            >Changing flatten depth rebuilds all columns.</span
+                        >
+                    </div>
+
+                    <div class="global-settings-row">
+                        <span>Flatten depth</span>
+                        <input
+                            class="number-input"
+                            id="flatten-depth-input"
+                            type="number"
+                            min="1"
+                            max="8"
+                            value="3"
+                        />
+                        <button
+                            class="btn btn-small"
+                            id="apply-depth-button"
+                            type="button"
+                        >
+                            Apply depth
+                        </button>
+                        <span>Page size</span>
+                        <select
+                            class="select-input settings-select-inline"
+                            id="page-size-select"
+                        >
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <button
+                            class="btn btn-small"
+                            id="apply-page-size-button"
+                            type="button"
+                        >
+                            Apply size
+                        </button>
+                        <span class="drawer-note"
+                            >Default is 3. Column cap remains 50.</span
+                        >
+                    </div>
+                </section>
+
+                <section class="drawer-section">
+                    <div class="drawer-section-head">
+                        <h3 class="drawer-section-title">Datasets</h3>
+                        <span class="drawer-note"
+                            >One row per column. Full paths remain visible
+                            here.</span
+                        >
+                    </div>
+
+                    <div id="settings-datasets"></div>
+                </section>
+            </div>
+        </aside>
+
+        <div class="loading-overlay" id="loading-overlay" aria-hidden="true">
+            <div class="loading-panel" role="status" aria-live="polite">
+                <div class="loading-row">
+                    <div class="loading-spinner" aria-hidden="true"></div>
+                    <div>
+                        <p class="loading-title" id="loading-title">Loading</p>
+                        <p class="loading-detail" id="loading-detail">
+                            Preparing the JSON explorer.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+        <script src="assets/js/app-state.js"></script>
+        <script src="assets/js/app-utils.js"></script>
+        <script src="assets/js/app-render.js"></script>
+        <script src="assets/js/app-json-tree.js"></script>
+        <script src="assets/js/app-data.js"></script>
+        <script src="assets/js/app-tables.js"></script>
+        <script src="assets/js/app-main.js"></script>
+    </body>
+</html>
