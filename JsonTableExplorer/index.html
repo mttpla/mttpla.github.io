@@ -148,6 +148,64 @@
                 </div>
             </main>
 
+            <section class="tool-docs">
+  <h2>What it is</h2>
+  <p>
+    JSON Table Explorer is a browser-only technical viewer for arbitrary JSON.
+    It turns top-level arrays into independent tables, flattens nested objects
+    into columns, and keeps document metadata separate from tabular data.
+  </p>
+
+  <h2>How to use it</h2>
+  <p>
+    Click <strong>Choose File</strong> in the <strong>JSON Upload</strong> section
+    and select a JSON file from your system. The file is parsed directly in the browser.
+    If the document contains multiple top-level arrays, the explorer creates one table
+    for each array.
+  </p>
+
+  <h2>What you can do</h2>
+  <ul>
+    <li>Sort table rows by column</li>
+    <li>Filter data with <strong>Global Search</strong></li>
+    <li>Hide columns you do not want to display</li>
+    <li>Inspect flattened nested fields as regular columns</li>
+    <li>Export each table with <strong>Export CSV</strong></li>
+  </ul>
+
+  <h2>Settings</h2>
+  <p>
+    Use the <strong>Settings</strong> panel for compact technical controls over schema,
+    columns and aggregations.
+  </p>
+  <ul>
+    <li>
+      <strong>Flatten depth</strong>: controls how deeply nested objects are expanded
+      into columns. A higher value explores deeper nested paths. Use
+      <strong>Apply depth</strong> to rebuild the table structure.
+    </li>
+    <li>
+      <strong>Page size</strong>: controls how many rows are shown per page.
+      Available options are 10, 20, 50 and 100. Use <strong>Apply size</strong>
+      to update pagination.
+    </li>
+  </ul>
+
+  <h2>Metadata and structure</h2>
+  <p>
+    Non-tabular metadata is shown separately, so contextual information is not mixed
+    with table rows. This is useful for JSON documents that include both metadata
+    and one or more data arrays.
+  </p>
+
+  <h2>Privacy</h2>
+  <p>
+    All processing happens client-side in your browser. JSON files are not uploaded,
+    stored or sent to any server, which makes the tool suitable for inspecting
+    private or sensitive data locally.
+  </p>
+</section>
+
             <footer class="footer">
                 <div class="footer-line">
                     <div class="copyright" id="copyright-label">
