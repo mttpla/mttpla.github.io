@@ -90,6 +90,8 @@ function processJsonDocument(text, fileName) {
     state.searchTerm = "";
     state.settings.flattenDepth = DEFAULT_FLATTEN_DEPTH;
     state.settings.pageSize = DEFAULT_PAGE_SIZE;
+    state.settings.visibleColumnLimit =
+        DEFAULT_VISIBLE_COLUMN_LIMIT;
     state.ui.settingsDirty = true;
     state.ui.summaryCollapsed = true;
     state.ui.metadataCollapsed = false;
@@ -146,6 +148,8 @@ function resetLoadedDocument(clearFileName) {
     state.searchTerm = "";
     state.settings.flattenDepth = DEFAULT_FLATTEN_DEPTH;
     state.settings.pageSize = DEFAULT_PAGE_SIZE;
+    state.settings.visibleColumnLimit =
+        DEFAULT_VISIBLE_COLUMN_LIMIT;
     state.ui.settingsDirty = true;
     state.ui.summaryCollapsed = true;
     state.ui.metadataCollapsed = false;
@@ -501,7 +505,7 @@ function buildDatasetState(entry, flattenDepth) {
         schema: [],
         columnRegistry: {},
         totalDetectedColumns: 0,
-        ignoredColumnCount: 0,
+        autoHiddenColumnCount: 0,
         warnings: [],
         columnOrder: [],
         table: null,
@@ -515,7 +519,10 @@ function buildDatasetState(entry, flattenDepth) {
     }
 
     var normalizedRows = normalizeRows(preparedRows, flattenDepth);
-    var discovery = discoverSchema(normalizedRows);
+    var discovery = discoverSchema(
+        normalizedRows,
+        state.settings.visibleColumnLimit,
+    );
 
     if (!discovery.schema.length) {
         datasetState.warnings.push(
@@ -540,9 +547,11 @@ function buildDatasetState(entry, flattenDepth) {
     datasetState.columnRegistry = createColumnRegistry(
         discovery.schema,
         columnTypes,
+        state.settings.visibleColumnLimit,
     );
     datasetState.totalDetectedColumns = discovery.totalColumns;
-    datasetState.ignoredColumnCount = discovery.ignoredColumns;
+    datasetState.autoHiddenColumnCount =
+        discovery.autoHiddenColumns;
     datasetState.columnOrder = discovery.schema.slice();
 
     if (discovery.warning) {
@@ -664,7 +673,7 @@ function joinArrayValues(values) {
 }
 
 // SCHEMA DISCOVERY
-function discoverSchema(rows) {
+function discoverSchema(rows, visibleColumnLimit) {
     var seen = new Set();
     var columns = [];
 
@@ -678,23 +687,20 @@ function discoverSchema(rows) {
     });
 
     var totalColumns = columns.length;
-    var schema = columns.slice(0, MAX_COLUMNS);
-    var ignoredColumns = Math.max(totalColumns - schema.length, 0);
-    var warning =
-        ignoredColumns > 0
-            ? "Too many columns detected (" +
-              totalColumns +
-              "). Showing the first " +
-              MAX_COLUMNS +
-              " columns and ignoring " +
-              ignoredColumns +
-              "."
-            : "";
+    var schema = columns.slice();
+    var autoHiddenColumns = computeAutoHiddenColumnCount(
+        totalColumns,
+        visibleColumnLimit,
+    );
+    var warning = buildVisibleColumnLimitWarning(
+        totalColumns,
+        visibleColumnLimit,
+    );
 
     return {
         schema: schema,
         totalColumns: totalColumns,
-        ignoredColumns: ignoredColumns,
+        autoHiddenColumns: autoHiddenColumns,
         warning: warning,
     };
 }
@@ -756,13 +762,17 @@ function projectRowsToSchema(rows, schema, columnTypes) {
 }
 
 // COLUMN REGISTRY
-function createColumnRegistry(schema, columnTypes) {
+function createColumnRegistry(
+    schema,
+    columnTypes,
+    visibleColumnLimit,
+) {
     var registry = {};
 
-    schema.forEach(function (field) {
+    schema.forEach(function (field, index) {
         registry[field] = {
             type: columnTypes[field],
-            visible: true,
+            visible: index < visibleColumnLimit,
             aggregation:
                 columnTypes[field] === "number" ? "avg" : "none",
         };
@@ -810,6 +820,66 @@ function getOrderedSchema(datasetState) {
     });
 
     return ordered;
+}
+function computeAutoHiddenColumnCount(
+    totalColumns,
+    visibleColumnLimit,
+) {
+    return Math.max(totalColumns - visibleColumnLimit, 0);
+}
+function buildVisibleColumnLimitWarning(
+    totalColumns,
+    visibleColumnLimit,
+) {
+    var autoHiddenColumns = computeAutoHiddenColumnCount(
+        totalColumns,
+        visibleColumnLimit,
+    );
+
+    if (autoHiddenColumns <= 0) {
+        return "";
+    }
+
+    return (
+        "Too many columns detected (" +
+        totalColumns +
+        "). Showing the first " +
+        visibleColumnLimit +
+        " columns by default and keeping " +
+        autoHiddenColumns +
+        " additional columns hidden in Settings."
+    );
+}
+function applyVisibleColumnLimitToDataset(
+    datasetState,
+    visibleColumnLimit,
+) {
+    var orderedSchema = getOrderedSchema(datasetState);
+
+    orderedSchema.forEach(function (field, index) {
+        if (datasetState.columnRegistry[field]) {
+            datasetState.columnRegistry[field].visible =
+                index < visibleColumnLimit;
+        }
+    });
+
+    datasetState.autoHiddenColumnCount =
+        computeAutoHiddenColumnCount(
+            orderedSchema.length,
+            visibleColumnLimit,
+        );
+
+    if (!datasetState.rawRowCount || !orderedSchema.length) {
+        return;
+    }
+
+    var warning = buildVisibleColumnLimitWarning(
+        orderedSchema.length,
+        visibleColumnLimit,
+    );
+    datasetState.warnings = warning
+        ? ['Dataset "' + datasetState.name + '": ' + warning]
+        : [];
 }
 function getVisibleFields(datasetState) {
     return getOrderedSchema(datasetState).filter(function (field) {

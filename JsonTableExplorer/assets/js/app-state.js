@@ -1,9 +1,9 @@
 "use strict";
 
 // STATE
-const MAX_COLUMNS = 50;
 const DEFAULT_FLATTEN_DEPTH = 3;
 const DEFAULT_PAGE_SIZE = 20;
+const DEFAULT_VISIBLE_COLUMN_LIMIT = 50;
 const VALUE_FIELD = "value";
 
 const state = {
@@ -22,6 +22,7 @@ const state = {
     settings: {
         flattenDepth: DEFAULT_FLATTEN_DEPTH,
         pageSize: DEFAULT_PAGE_SIZE,
+        visibleColumnLimit: DEFAULT_VISIBLE_COLUMN_LIMIT,
     },
     ui: {
         settingsOpen: false,
@@ -74,6 +75,12 @@ const ui = {
     pageSizeSelect: document.getElementById("page-size-select"),
     applyPageSizeButton: document.getElementById(
         "apply-page-size-button",
+    ),
+    visibleColumnLimitInput: document.getElementById(
+        "visible-column-limit-input",
+    ),
+    applyVisibleColumnLimitButton: document.getElementById(
+        "apply-visible-column-limit-button",
     ),
     settingsDatasets: document.getElementById("settings-datasets"),
     loadingOverlay: document.getElementById("loading-overlay"),

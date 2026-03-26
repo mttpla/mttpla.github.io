@@ -127,6 +127,7 @@ function renderSummarySection() {
         "metadata fields: " + metadataCount,
         "depth: " + state.settings.flattenDepth,
         "page size: " + state.settings.pageSize,
+        "visible columns: " + state.settings.visibleColumnLimit,
     ].join(" · ");
 
     ui.summaryInline.textContent = inlineText;
@@ -143,7 +144,10 @@ function renderSummarySection() {
             "Page Size",
             String(state.settings.pageSize),
         ),
-        renderSummaryItem("Column Cap", String(MAX_COLUMNS)),
+        renderSummaryItem(
+            "Visible Columns",
+            String(state.settings.visibleColumnLimit),
+        ),
     ].join("");
 
     setSectionState(
@@ -218,6 +222,9 @@ function renderSettingsDrawer() {
         state.settings.flattenDepth,
     );
     ui.pageSizeSelect.value = String(state.settings.pageSize);
+    ui.visibleColumnLimitInput.value = String(
+        state.settings.visibleColumnLimit,
+    );
 
     if (!state.ui.settingsOpen) {
         return;
@@ -427,9 +434,10 @@ function buildDatasetMeta(datasetState) {
                 : datasetState.path),
     ];
 
-    if (datasetState.ignoredColumnCount > 0) {
+    if (datasetState.autoHiddenColumnCount > 0) {
         parts.push(
-            "ignored columns: " + datasetState.ignoredColumnCount,
+            "auto-hidden columns: " +
+                datasetState.autoHiddenColumnCount,
         );
     }
 
@@ -448,6 +456,7 @@ function updateControlState() {
     ui.exportButton.disabled = !hasTables || isLoading;
     ui.applyDepthButton.disabled = isLoading;
     ui.applyPageSizeButton.disabled = isLoading;
+    ui.applyVisibleColumnLimitButton.disabled = isLoading;
     ui.closeSettingsButton.disabled = isLoading;
 }
 

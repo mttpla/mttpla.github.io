@@ -198,6 +198,11 @@
       Available options are 10, 20, 50 and 100. Use <strong>Apply size</strong>
       to update pagination.
     </li>
+    <li>
+      <strong>Visible columns</strong>: controls how many detected columns are
+      shown by default when a dataset is loaded. Additional columns remain
+      available in <strong>Settings</strong> and start hidden.
+    </li>
   </ul>
 
   <h2>Metadata and structure</h2>
@@ -301,8 +306,24 @@
                         >
                             Apply size
                         </button>
+                        <span>Visible columns</span>
+                        <input
+                            class="number-input"
+                            id="visible-column-limit-input"
+                            type="number"
+                            min="1"
+                            value="50"
+                        />
+                        <button
+                            class="btn btn-small"
+                            id="apply-visible-column-limit-button"
+                            type="button"
+                        >
+                            Apply limit
+                        </button>
                         <span class="drawer-note"
-                            >Default is 3. Column cap remains 50.</span
+                            >Defaults: depth 3, page size 20, visible
+                            columns 50.</span
                         >
                     </div>
                 </section>

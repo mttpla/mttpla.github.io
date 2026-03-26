@@ -57,6 +57,10 @@ function bindEvents() {
         "click",
         handleApplyPageSize,
     );
+    ui.applyVisibleColumnLimitButton.addEventListener(
+        "click",
+        handleApplyVisibleColumnLimit,
+    );
     ui.settingsDatasets.addEventListener(
         "change",
         handleSettingsChange,
@@ -182,6 +186,50 @@ function handleApplyPageSize() {
         },
     );
 }
+function handleApplyVisibleColumnLimit() {
+    var rawValue = Number(ui.visibleColumnLimitInput.value);
+    if (!Number.isFinite(rawValue)) {
+        ui.visibleColumnLimitInput.value = String(
+            state.settings.visibleColumnLimit,
+        );
+        return;
+    }
+
+    var nextLimit = Math.max(Math.round(rawValue), 1);
+    ui.visibleColumnLimitInput.value = String(nextLimit);
+
+    if (state.settings.visibleColumnLimit === nextLimit) {
+        return;
+    }
+
+    state.settings.visibleColumnLimit = nextLimit;
+
+    if (!state.datasets.length) {
+        renderSummarySection();
+        return;
+    }
+
+    runBlockingTask(
+        "Updating visible columns",
+        "Applying the default visible-column limit to all datasets.",
+        function () {
+            state.datasets.forEach(function (datasetState) {
+                applyVisibleColumnLimitToDataset(
+                    datasetState,
+                    nextLimit,
+                );
+                createOrRefreshTable(datasetState, false);
+            });
+            state.warnings = collectWarnings(state.datasets);
+            state.ui.settingsDirty = true;
+            syncPrimaryState();
+            renderMessages();
+            renderSummarySection();
+            renderSettingsDrawer();
+            updateControlState();
+        },
+    );
+}
 function handleResetConfiguration() {
     if (!state.rawDatasets.length) {
         return;
@@ -190,11 +238,16 @@ function handleResetConfiguration() {
     state.searchTerm = "";
     state.settings.flattenDepth = DEFAULT_FLATTEN_DEPTH;
     state.settings.pageSize = DEFAULT_PAGE_SIZE;
+    state.settings.visibleColumnLimit =
+        DEFAULT_VISIBLE_COLUMN_LIMIT;
     state.ui.summaryCollapsed = true;
     state.ui.metadataCollapsed = false;
     ui.globalSearch.value = "";
     ui.flattenDepthInput.value = String(DEFAULT_FLATTEN_DEPTH);
     ui.pageSizeSelect.value = String(DEFAULT_PAGE_SIZE);
+    ui.visibleColumnLimitInput.value = String(
+        DEFAULT_VISIBLE_COLUMN_LIMIT,
+    );
     runBlockingTask(
         "Resetting configuration",
         "Restoring default schema and table settings.",
