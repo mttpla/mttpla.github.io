@@ -34,42 +34,37 @@ function renderCopyrightLabel() {
         "Copyright " + year + " Matteo Paoli";
 }
 function renderLastCommitInfo() {
-    $(".lastcommit").text("n/a");
-    $(".lastdate").text("n/a");
-    $("#lasthtmlurl").attr("href", "#").addClass("is-disabled");
+    var commitEls = document.querySelectorAll(".lastcommit");
+    var dateEls = document.querySelectorAll(".lastdate");
+    var linkEl = document.getElementById("lasthtmlurl");
 
-    if (
-        typeof $ === "undefined" ||
-        typeof $.getJSON !== "function"
-    ) {
-        return;
-    }
-
-    $.getJSON(
+    fetch(
         "https://api.github.com/repos/mttpla/matteopaoli-it/commits",
-        function (data) {
+    )
+        .then(function (res) {
+            return res.json();
+        })
+        .then(function (data) {
             if (!Array.isArray(data) || !data.length) {
                 return;
             }
 
             var shortSha = data[0].sha.substr(0, 8);
             state.appCommit = shortSha;
-            $(".lastcommit").text(shortSha);
-            $(".lastdate").text(
-                data[0].commit.committer.date
+            commitEls.forEach(function (el) {
+                el.textContent = shortSha;
+            });
+            dateEls.forEach(function (el) {
+                el.textContent = data[0].commit.committer.date
                     .replace("T", " ")
-                    .replace("Z", " "),
-            );
-            document
-                .getElementById("lasthtmlurl")
-                .setAttribute("href", data[0].html_url);
-            $("#lasthtmlurl").removeClass("is-disabled");
-        },
-    ).fail(function () {
-        $(".lastcommit").text("n/a");
-        $(".lastdate").text("n/a");
-        $("#lasthtmlurl").attr("href", "#").addClass("is-disabled");
-    });
+                    .replace("Z", " ");
+            });
+            linkEl.setAttribute("href", data[0].html_url);
+            linkEl.classList.remove("is-disabled");
+        })
+        .catch(function () {
+            // defaults already show n/a
+        });
 }
 function setLoadingState(isLoading, title, detail) {
     state.ui.loading = isLoading;

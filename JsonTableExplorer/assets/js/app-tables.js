@@ -133,15 +133,19 @@ function computeDatasetTableMaxHeight(datasetState) {
         Math.max(datasetState.dataset.length, 1),
         state.settings.pageSize,
     );
-    var headerHeight = 78;
-    var bodyHeight = visibleRows * 34;
-    var footerHeight = datasetHasAggregation(datasetState) ? 38 : 0;
+    var bodyHeight = visibleRows * TABLE_ROW_HEIGHT;
+    var footerHeight = datasetHasAggregation(datasetState)
+        ? TABLE_FOOTER_HEIGHT
+        : 0;
     var paginationHeight =
         datasetState.dataset.length > state.settings.pageSize
-            ? 44
+            ? TABLE_PAGINATION_HEIGHT
             : 0;
     return (
-        headerHeight + bodyHeight + footerHeight + paginationHeight
+        TABLE_HEADER_HEIGHT +
+        bodyHeight +
+        footerHeight +
+        paginationHeight
     );
 }
 function datasetHasAggregation(datasetState) {
@@ -162,7 +166,6 @@ function destroyAllTables() {
     state.datasets.forEach(function (datasetState) {
         destroyDatasetTable(datasetState);
     });
-    state.table = null;
 }
 function syncColumnOrder(datasetState) {
     if (!datasetState.table) {

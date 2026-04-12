@@ -189,12 +189,8 @@ function handleLoadError(message, options) {
 }
 function resetLoadedDocument(clearFileName) {
     destroyAllTables();
-    state.dataset = [];
-    state.schema = [];
-    state.columnRegistry = {};
     state.metadata = {};
     state.originalJson = null;
-    state.table = null;
     state.rawDatasets = [];
     state.datasets = [];
     state.warnings = [];
@@ -953,15 +949,7 @@ function getVisibleFields(datasetState) {
 
 // TABLE GENERATION
 function syncPrimaryState() {
-    var primary =
-        state.datasets.find(function (datasetState) {
-            return datasetState.schema.length > 0;
-        }) || null;
-
-    state.dataset = primary ? primary.dataset : [];
-    state.schema = primary ? primary.schema : [];
-    state.columnRegistry = primary ? primary.columnRegistry : {};
-    state.table = primary ? primary.table : null;
+    // no-op kept as call-site anchor; legacy per-dataset fields removed
 }
 function collectWarnings(datasets) {
     var warnings = [];
@@ -1108,56 +1096,4 @@ function applyJteRegistryOnly(jteSettings) {
             });
         }
     });
-}
-function applyJteColumnOverrides(jteSettings) {
-    if (!jteSettings || !Array.isArray(jteSettings.datasets)) {
-        return;
-    }
-
-    var dirty = false;
-
-    jteSettings.datasets.forEach(function (savedDataset) {
-        var datasetState = state.datasets.find(function (ds) {
-            return ds.name === savedDataset.name;
-        });
-
-        if (!datasetState) {
-            return;
-        }
-
-        if (
-            Array.isArray(savedDataset.columnOrder) &&
-            savedDataset.columnOrder.length
-        ) {
-            datasetState.columnOrder = savedDataset.columnOrder.slice();
-        }
-
-        if (savedDataset.columns && isPlainObject(savedDataset.columns)) {
-            Object.keys(savedDataset.columns).forEach(function (field) {
-                if (!datasetState.columnRegistry[field]) {
-                    return;
-                }
-                var saved = savedDataset.columns[field];
-                if (typeof saved.visible === "boolean") {
-                    datasetState.columnRegistry[field].visible =
-                        saved.visible;
-                }
-                if (typeof saved.aggregation === "string") {
-                    datasetState.columnRegistry[field].aggregation =
-                        saved.aggregation;
-                }
-            });
-        }
-
-        createOrRefreshTable(datasetState, false);
-        dirty = true;
-    });
-
-    if (dirty) {
-        state.warnings = collectWarnings(state.datasets);
-        syncPrimaryState();
-        renderMessages();
-        renderSettingsDrawer();
-        renderSummarySection();
-    }
 }

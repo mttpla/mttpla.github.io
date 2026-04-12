@@ -279,6 +279,7 @@ function handleExportCsv() {
     var baseName = buildExportBaseName(state.fileName || "data");
 
     exportable.forEach(function (datasetState, index) {
+        // Stagger downloads so the browser does not merge them into one
         window.setTimeout(function () {
             if (datasetState.table) {
                 datasetState.table.download(

@@ -7,14 +7,15 @@ const DEFAULT_PAGE_SIZE = 20;
 const DEFAULT_VISIBLE_COLUMN_LIMIT = 50;
 const VALUE_FIELD = "value";
 
+const TABLE_HEADER_HEIGHT = 78;
+const TABLE_ROW_HEIGHT = 34;
+const TABLE_FOOTER_HEIGHT = 38;
+const TABLE_PAGINATION_HEIGHT = 44;
+
 const state = {
     appCommit: null,
-    dataset: [],
-    schema: [],
-    columnRegistry: {},
     metadata: {},
     originalJson: null,
-    table: null,
     rawDatasets: [],
     datasets: [],
     fileName: "",
