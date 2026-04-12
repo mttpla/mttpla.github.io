@@ -19,6 +19,13 @@ function initializeApp() {
 }
 function bindEvents() {
     ui.fileInput.addEventListener("change", handleFileSelection);
+    ui.emptyUploadCard.addEventListener("click", function () {
+        ui.fileInput.click();
+    });
+    ui.emptyPasteCard.addEventListener("click", openPastePanel);
+    ui.topbarPasteButton.addEventListener("click", openPastePanel);
+    ui.pasteLoadButton.addEventListener("click", handlePasteInput);
+    ui.pasteCancelButton.addEventListener("click", closePastePanel);
     ui.globalSearch.addEventListener("input", handleGlobalSearch);
     ui.settingsButton.addEventListener(
         "click",

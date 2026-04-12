@@ -2,6 +2,27 @@
 
 // DATA PIPELINE
 
+function handlePasteInput() {
+    var text = ui.pasteTextarea.value.trim();
+    if (!text) {
+        return;
+    }
+
+    closePastePanel();
+    resetLoadedDocument(false);
+    state.fileName = "pasted-json";
+    state.inputSource = "paste";
+    renderSelectedFileName();
+    renderSummarySection();
+
+    runBlockingTask(
+        "Rendering tables",
+        "Parsing JSON and building datasets.",
+        function () {
+            processJsonDocument(text, "pasted-json");
+        },
+    );
+}
 function handleFileSelection(event) {
     var file = event.target.files && event.target.files[0];
     if (!file) {
@@ -11,6 +32,7 @@ function handleFileSelection(event) {
     ui.fileInput.value = "";
     resetLoadedDocument(false);
     state.fileName = file.name;
+    state.inputSource = "file";
     renderSelectedFileName();
     renderSummarySection();
     setLoadingState(
@@ -154,12 +176,16 @@ function resetLoadedDocument(clearFileName) {
     state.ui.summaryCollapsed = true;
     state.ui.metadataCollapsed = false;
     state.ui.jsonTreeCollapsed = true;
+    state.ui.pastePanelOpen = false;
 
     if (clearFileName) {
         state.fileName = "";
+        state.inputSource = "";
     }
 
     ui.globalSearch.value = "";
+    ui.pasteTextarea.value = "";
+    ui.pastePanel.hidden = true;
     renderSelectedFileName();
     renderMessages();
     renderSummarySection();

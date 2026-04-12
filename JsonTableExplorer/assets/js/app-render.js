@@ -3,7 +3,16 @@
 // UI RENDERING
 
 function renderSelectedFileName() {
-    ui.fileName.textContent = state.fileName || "No file selected";
+    if (state.inputSource === "paste") {
+        ui.fileName.textContent = "Pasted JSON data";
+        ui.fileName.classList.add("is-placeholder");
+    } else if (state.fileName) {
+        ui.fileName.textContent = state.fileName;
+        ui.fileName.classList.remove("is-placeholder");
+    } else {
+        ui.fileName.textContent = "No file selected";
+        ui.fileName.classList.add("is-placeholder");
+    }
 }
 function renderLoadingState() {
     ui.loadingOverlay.classList.toggle(
@@ -377,11 +386,19 @@ function handleKeydown(event) {
 function renderDatasets() {
     if (!state.datasets.length) {
         ui.datasetsContainer.innerHTML = "";
-        ui.emptyState.classList.remove("hidden");
+        if (state.ui.pastePanelOpen) {
+            ui.emptyState.classList.add("hidden");
+            ui.pastePanel.hidden = false;
+        } else {
+            ui.emptyState.classList.remove("hidden");
+            ui.pastePanel.hidden = true;
+        }
         return;
     }
 
     ui.emptyState.classList.add("hidden");
+    ui.pastePanel.hidden = true;
+    state.ui.pastePanelOpen = false;
     ui.datasetsContainer.innerHTML = state.datasets
         .map(function (datasetState) {
             if (!datasetState.schema.length) {
@@ -458,6 +475,26 @@ function updateControlState() {
     ui.applyPageSizeButton.disabled = isLoading;
     ui.applyVisibleColumnLimitButton.disabled = isLoading;
     ui.closeSettingsButton.disabled = isLoading;
+    ui.topbarPasteButton.disabled = isLoading;
+    ui.pasteLoadButton.disabled = isLoading;
+}
+
+// PASTE PANEL
+
+function openPastePanel() {
+    state.ui.pastePanelOpen = true;
+    ui.emptyState.classList.add("hidden");
+    ui.pastePanel.hidden = false;
+    ui.pasteTextarea.value = "";
+    ui.pasteTextarea.focus();
+}
+function closePastePanel() {
+    state.ui.pastePanelOpen = false;
+    ui.pastePanel.hidden = true;
+    ui.pasteTextarea.value = "";
+    if (!state.datasets.length) {
+        ui.emptyState.classList.remove("hidden");
+    }
 }
 
 // FILE LOADING

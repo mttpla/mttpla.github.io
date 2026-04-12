@@ -16,6 +16,7 @@ const state = {
     rawDatasets: [],
     datasets: [],
     fileName: "",
+    inputSource: "",
     warnings: [],
     error: "",
     searchTerm: "",
@@ -31,6 +32,7 @@ const state = {
         summaryCollapsed: true,
         metadataCollapsed: false,
         jsonTreeCollapsed: true,
+        pastePanelOpen: false,
     },
 };
 
@@ -86,4 +88,15 @@ const ui = {
     loadingOverlay: document.getElementById("loading-overlay"),
     loadingTitle: document.getElementById("loading-title"),
     loadingDetail: document.getElementById("loading-detail"),
+    emptyUploadCard: document.getElementById("empty-upload-card"),
+    emptyPasteCard: document.getElementById("empty-paste-card"),
+    pastePanel: document.getElementById("paste-panel"),
+    pasteTextarea: document.getElementById("paste-textarea"),
+    pasteLoadButton: document.getElementById("paste-load-button"),
+    pasteCancelButton: document.getElementById(
+        "paste-cancel-button",
+    ),
+    topbarPasteButton: document.getElementById(
+        "topbar-paste-button",
+    ),
 };

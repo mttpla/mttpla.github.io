@@ -170,6 +170,11 @@ select {
     max-width: min(420px, 36vw);
 }
 
+.file-name.is-placeholder {
+    color: var(--text-faint);
+    font-style: italic;
+}
+
 .btn {
     height: 32px;
     border: 1px solid var(--line-strong);
@@ -514,6 +519,118 @@ select {
 
 .empty-state.hidden {
     display: none;
+}
+
+.empty-state-hub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.empty-state-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 28px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--panel);
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+    min-width: 180px;
+    font: inherit;
+    color: inherit;
+}
+
+.empty-state-card:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.empty-state-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.empty-state-card-desc {
+    font-size: 11px;
+    color: var(--text-soft);
+    line-height: 1.4;
+}
+
+.empty-state-divider {
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.paste-panel {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.paste-panel[hidden] {
+    display: none;
+}
+
+.paste-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.paste-panel-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text);
+}
+
+.paste-textarea {
+    width: 100%;
+    min-height: 120px;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background: var(--panel);
+    color: var(--text);
+    padding: 8px 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    resize: vertical;
+    outline: none;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.paste-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(91, 84, 72, 0.1);
+}
+
+.paste-panel-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.topbar-divider {
+    font-size: 10px;
+    color: var(--text-faint);
 }
 
 .footer {
@@ -981,5 +1098,15 @@ select {
 
     .file-name {
         max-width: 100%;
+    }
+
+    .empty-state-hub {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .empty-state-card {
+        min-width: 0;
+        width: 100%;
     }
 }

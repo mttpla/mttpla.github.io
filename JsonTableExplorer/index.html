@@ -37,7 +37,7 @@
 
                 <div class="topbar-controls">
                     <div class="control-stack">
-                        <span class="control-label">JSON Upload</span>
+                        <span class="control-label">JSON Input</span>
                         <div class="control-row">
                             <input
                                 class="file-input-native"
@@ -48,6 +48,14 @@
                             <label class="btn" for="file-input"
                                 >Choose File</label
                             >
+                            <span class="topbar-divider">or</span>
+                            <button
+                                class="btn"
+                                id="topbar-paste-button"
+                                type="button"
+                            >
+                                Paste JSON
+                            </button>
                             <span class="file-name" id="file-name"
                                 >No file selected</span
                             >
@@ -98,6 +106,22 @@
                 </div>
             </header>
 
+            <div class="paste-panel" id="paste-panel" hidden>
+                <div class="paste-panel-header">
+                    <span class="paste-panel-title">Paste JSON Data</span>
+                    <button class="btn btn-small" id="paste-cancel-button" type="button">Cancel</button>
+                </div>
+                <textarea
+                    class="paste-textarea"
+                    id="paste-textarea"
+                    rows="6"
+                    placeholder="Paste your JSON content here..."
+                ></textarea>
+                <div class="paste-panel-actions">
+                    <button class="btn btn-primary" id="paste-load-button" type="button">Load JSON</button>
+                </div>
+            </div>
+
             <div id="messages"></div>
 
             <section class="section-panel" id="summary-section" hidden>
@@ -135,6 +159,19 @@
             </section>
 
             <main class="content-shell">
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-state-hub">
+                        <button class="empty-state-card" id="empty-upload-card" type="button">
+                            <span class="empty-state-card-title">Upload a File</span>
+                            <span class="empty-state-card-desc">Select a .json file from your system</span>
+                        </button>
+                        <span class="empty-state-divider">or</span>
+                        <button class="empty-state-card" id="empty-paste-card" type="button">
+                            <span class="empty-state-card-title">Paste JSON</span>
+                            <span class="empty-state-card-desc">Paste raw JSON data directly</span>
+                        </button>
+                    </div>
+                </div>
                 <div class="datasets-container" id="datasets-container"></div>
                 <section class="section-panel json-tree-panel" id="json-tree-section" hidden>
                     <button
@@ -151,10 +188,6 @@
                         <div class="json-tree-wrap" id="json-tree-content"></div>
                     </div>
                 </section>
-                <div class="empty-state" id="empty-state">
-                    Upload a JSON file to start exploring its top-level arrays
-                    as independent technical tables.
-                </div>
             </main>
 
             <section class="tool-docs">
@@ -167,8 +200,9 @@
 
   <h2>How to use it</h2>
   <p>
-    Click <strong>Choose File</strong> in the <strong>JSON Upload</strong> section
-    and select a JSON file from your system. The file is parsed directly in the browser.
+    Click <strong>Choose File</strong> in the <strong>JSON Input</strong> section
+    and select a JSON file from your system, or click <strong>Paste JSON</strong>
+    to paste raw JSON data directly. Both methods parse the data entirely in the browser.
     If the document contains multiple top-level arrays, the explorer creates one table
     for each array.
   </p>
