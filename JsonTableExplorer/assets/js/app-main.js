@@ -44,6 +44,10 @@ function bindEvents() {
         handleResetConfiguration,
     );
     ui.exportButton.addEventListener("click", handleExportCsv);
+    ui.downloadJsonButton.addEventListener(
+        "click",
+        handleDownloadJson,
+    );
     ui.summaryToggle.addEventListener(
         "click",
         toggleSummarySection,
@@ -287,6 +291,41 @@ function handleExportCsv() {
             }
         }, index * 140);
     });
+}
+
+function handleDownloadJson() {
+    if (!state.originalJson || !state.datasets.length) {
+        return;
+    }
+
+    var snapshot = buildJteSnapshot();
+    var output;
+
+    if (Array.isArray(state.originalJson)) {
+        // Wrap array root: colleague loads file and gets original array back via $data
+        output = {};
+        output[JTE_KEY] = snapshot[JTE_KEY];
+        output["$data"] = state.originalJson;
+    } else {
+        // Merge JTE key into existing root object
+        output = {};
+        Object.keys(state.originalJson).forEach(function (key) {
+            output[key] = state.originalJson[key];
+        });
+        output[JTE_KEY] = snapshot[JTE_KEY];
+    }
+
+    var baseName = buildExportBaseName(state.fileName || "data");
+    var jsonString = JSON.stringify(output, null, 2);
+    var blob = new Blob([jsonString], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = baseName + ".jtx.json";
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
 }
 
 // HELPERS

@@ -52,7 +52,9 @@ function renderLastCommitInfo() {
                 return;
             }
 
-            $(".lastcommit").text(data[0].sha.substr(0, 8));
+            var shortSha = data[0].sha.substr(0, 8);
+            state.appCommit = shortSha;
+            $(".lastcommit").text(shortSha);
             $(".lastdate").text(
                 data[0].commit.committer.date
                     .replace("T", " ")
@@ -471,6 +473,7 @@ function updateControlState() {
     ui.settingsButton.disabled = isLoading;
     ui.resetButton.disabled = !hasDatasets || isLoading;
     ui.exportButton.disabled = !hasTables || isLoading;
+    ui.downloadJsonButton.disabled = !hasDatasets || isLoading;
     ui.applyDepthButton.disabled = isLoading;
     ui.applyPageSizeButton.disabled = isLoading;
     ui.applyVisibleColumnLimitButton.disabled = isLoading;

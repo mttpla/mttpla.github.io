@@ -87,6 +87,11 @@ function processJsonDocument(text, fileName) {
         return;
     }
 
+    // Strip JTE settings before dataset detection; keep clean data root
+    var extracted = extractJteSettings(root);
+    var jteSettings = extracted.jteSettings;
+    root = extracted.dataRoot;
+
     var detected = detectTopLevelDatasets(root);
 
     if (!detected.datasets.length) {
@@ -110,17 +115,44 @@ function processJsonDocument(text, fileName) {
     state.originalJson = root;
     state.error = "";
     state.searchTerm = "";
-    state.settings.flattenDepth = DEFAULT_FLATTEN_DEPTH;
-    state.settings.pageSize = DEFAULT_PAGE_SIZE;
-    state.settings.visibleColumnLimit =
-        DEFAULT_VISIBLE_COLUMN_LIMIT;
+
+    // Restore global settings from JTE snapshot or fall back to defaults
+    if (jteSettings && isPlainObject(jteSettings.settings)) {
+        var s = jteSettings.settings;
+        state.settings.flattenDepth = Number.isFinite(s.flattenDepth)
+            ? s.flattenDepth
+            : DEFAULT_FLATTEN_DEPTH;
+        state.settings.pageSize =
+            Number.isFinite(s.pageSize) && s.pageSize > 0
+                ? s.pageSize
+                : DEFAULT_PAGE_SIZE;
+        state.settings.visibleColumnLimit =
+            Number.isFinite(s.visibleColumnLimit) &&
+            s.visibleColumnLimit > 0
+                ? s.visibleColumnLimit
+                : DEFAULT_VISIBLE_COLUMN_LIMIT;
+    } else {
+        state.settings.flattenDepth = DEFAULT_FLATTEN_DEPTH;
+        state.settings.pageSize = DEFAULT_PAGE_SIZE;
+        state.settings.visibleColumnLimit = DEFAULT_VISIBLE_COLUMN_LIMIT;
+    }
+
     state.ui.settingsDirty = true;
     state.ui.summaryCollapsed = true;
     state.ui.metadataCollapsed = false;
     state.ui.jsonTreeCollapsed = true;
     ui.globalSearch.value = "";
 
-    rebuildDatasetsFromRaw();
+    // Apply column registry overrides before table init so Tabulator
+    // starts with the correct visibility instead of receiving setColumns
+    // after its async init, which is silently ignored.
+    rebuildDatasetsFromRaw(
+        jteSettings
+            ? function () {
+                  applyJteRegistryOnly(jteSettings);
+              }
+            : null,
+    );
     renderSelectedFileName();
 }
 function handleLoadError(message, options) {
@@ -498,7 +530,7 @@ function flattenMetadataArray(values, path, target) {
 }
 
 // DATA NORMALIZATION
-function rebuildDatasetsFromRaw() {
+function rebuildDatasetsFromRaw(preTableInitHook) {
     destroyAllTables();
     state.datasets = state.rawDatasets.map(function (entry) {
         return buildDatasetState(
@@ -515,6 +547,9 @@ function rebuildDatasetsFromRaw() {
     renderJsonTreeSection();
     renderSettingsDrawer();
     renderDatasets();
+    if (typeof preTableInitHook === "function") {
+        preTableInitHook();
+    }
     initializeAllTables();
     updateControlState();
 }
@@ -973,4 +1008,156 @@ function sanitizeFilePart(value) {
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/^-+|-+$/g, "") || "data"
     );
+}
+
+// JTE SETTINGS SNAPSHOT
+function buildJteSnapshot() {
+    var datasets = state.datasets.map(function (datasetState) {
+        var columns = {};
+        Object.keys(datasetState.columnRegistry).forEach(
+            function (field) {
+                var entry = datasetState.columnRegistry[field];
+                columns[field] = {
+                    visible: entry.visible,
+                    aggregation: entry.aggregation,
+                };
+            },
+        );
+        return {
+            name: datasetState.name,
+            path: datasetState.path,
+            columnOrder: datasetState.columnOrder.slice(),
+            columns: columns,
+        };
+    });
+
+    var snapshot = {};
+    snapshot[JTE_KEY] = {
+        version: state.appCommit || "unknown",
+        exportedAt: new Date().toISOString(),
+        settings: {
+            flattenDepth: state.settings.flattenDepth,
+            pageSize: state.settings.pageSize,
+            visibleColumnLimit: state.settings.visibleColumnLimit,
+        },
+        datasets: datasets,
+    };
+    return snapshot;
+}
+function extractJteSettings(root) {
+    // Wrapped array: { "$JsonTableExplorer": {...}, "$data": [...] }
+    if (
+        isPlainObject(root) &&
+        root[JTE_KEY] &&
+        Object.prototype.hasOwnProperty.call(root, "$data")
+    ) {
+        return { jteSettings: root[JTE_KEY], dataRoot: root["$data"] };
+    }
+
+    // Root object containing JTE key alongside data keys
+    if (isPlainObject(root) && root[JTE_KEY]) {
+        var cleanRoot = {};
+        Object.keys(root).forEach(function (key) {
+            if (key !== JTE_KEY) {
+                cleanRoot[key] = root[key];
+            }
+        });
+        return { jteSettings: root[JTE_KEY], dataRoot: cleanRoot };
+    }
+
+    return { jteSettings: null, dataRoot: root };
+}
+function applyJteRegistryOnly(jteSettings) {
+    if (!jteSettings || !Array.isArray(jteSettings.datasets)) {
+        return;
+    }
+
+    jteSettings.datasets.forEach(function (savedDataset) {
+        var datasetState = state.datasets.find(function (ds) {
+            return ds.name === savedDataset.name;
+        });
+
+        if (!datasetState) {
+            return;
+        }
+
+        if (
+            Array.isArray(savedDataset.columnOrder) &&
+            savedDataset.columnOrder.length
+        ) {
+            datasetState.columnOrder = savedDataset.columnOrder.slice();
+        }
+
+        if (
+            savedDataset.columns &&
+            isPlainObject(savedDataset.columns)
+        ) {
+            Object.keys(savedDataset.columns).forEach(function (field) {
+                if (!datasetState.columnRegistry[field]) {
+                    return;
+                }
+                var saved = savedDataset.columns[field];
+                if (typeof saved.visible === "boolean") {
+                    datasetState.columnRegistry[field].visible =
+                        saved.visible;
+                }
+                if (typeof saved.aggregation === "string") {
+                    datasetState.columnRegistry[field].aggregation =
+                        saved.aggregation;
+                }
+            });
+        }
+    });
+}
+function applyJteColumnOverrides(jteSettings) {
+    if (!jteSettings || !Array.isArray(jteSettings.datasets)) {
+        return;
+    }
+
+    var dirty = false;
+
+    jteSettings.datasets.forEach(function (savedDataset) {
+        var datasetState = state.datasets.find(function (ds) {
+            return ds.name === savedDataset.name;
+        });
+
+        if (!datasetState) {
+            return;
+        }
+
+        if (
+            Array.isArray(savedDataset.columnOrder) &&
+            savedDataset.columnOrder.length
+        ) {
+            datasetState.columnOrder = savedDataset.columnOrder.slice();
+        }
+
+        if (savedDataset.columns && isPlainObject(savedDataset.columns)) {
+            Object.keys(savedDataset.columns).forEach(function (field) {
+                if (!datasetState.columnRegistry[field]) {
+                    return;
+                }
+                var saved = savedDataset.columns[field];
+                if (typeof saved.visible === "boolean") {
+                    datasetState.columnRegistry[field].visible =
+                        saved.visible;
+                }
+                if (typeof saved.aggregation === "string") {
+                    datasetState.columnRegistry[field].aggregation =
+                        saved.aggregation;
+                }
+            });
+        }
+
+        createOrRefreshTable(datasetState, false);
+        dirty = true;
+    });
+
+    if (dirty) {
+        state.warnings = collectWarnings(state.datasets);
+        syncPrimaryState();
+        renderMessages();
+        renderSettingsDrawer();
+        renderSummarySection();
+    }
 }

@@ -1,12 +1,14 @@
 "use strict";
 
 // STATE
+const JTE_KEY = "$JsonTableExplorer";
 const DEFAULT_FLATTEN_DEPTH = 3;
 const DEFAULT_PAGE_SIZE = 20;
 const DEFAULT_VISIBLE_COLUMN_LIMIT = 50;
 const VALUE_FIELD = "value";
 
 const state = {
+    appCommit: null,
     dataset: [],
     schema: [],
     columnRegistry: {},
@@ -43,6 +45,9 @@ const ui = {
     settingsButton: document.getElementById("settings-button"),
     resetButton: document.getElementById("reset-button"),
     exportButton: document.getElementById("export-button"),
+    downloadJsonButton: document.getElementById(
+        "download-json-button",
+    ),
     messages: document.getElementById("messages"),
     summarySection: document.getElementById("summary-section"),
     summaryToggle: document.getElementById("summary-toggle"),

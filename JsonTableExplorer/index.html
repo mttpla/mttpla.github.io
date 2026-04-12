@@ -101,6 +101,15 @@
                             >
                                 Export CSV
                             </button>
+                            <button
+                                class="btn"
+                                id="download-json-button"
+                                type="button"
+                                title="Download original JSON with current settings embedded — share with colleagues to reproduce the exact view"
+                                disabled
+                            >
+                                Download JSON + Settings
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -222,7 +231,34 @@
     <li>Hide columns you do not want to display</li>
     <li>Inspect flattened nested fields as regular columns</li>
     <li>Export each table with <strong>Export CSV</strong></li>
+    <li>Share your exact view with <strong>Download JSON + Settings</strong> — colleagues load the file and see the same configuration</li>
   </ul>
+
+  <h2>Share your view</h2>
+  <p>
+    Click <strong>Download JSON + Settings</strong> to export the original JSON together
+    with a snapshot of your current configuration. The downloaded file is a standard
+    <code>.jtx.json</code> file that a colleague can load directly into JSON Table Explorer
+    to reproduce your exact view — same hidden columns, aggregations, flatten depth,
+    page size and visible-column limit.
+  </p>
+  <p>
+    The settings are stored in a reserved top-level key called
+    <code>$JsonTableExplorer</code>. When the file is loaded, the explorer detects
+    this key, strips it from the data before processing, and applies the embedded
+    configuration automatically. The key contains:
+  </p>
+  <ul>
+    <li><strong>version</strong>: the commit hash of the app that generated the file, shown in the footer. Use this to identify which version of the explorer produced the snapshot.</li>
+    <li><strong>exportedAt</strong>: ISO timestamp of the export.</li>
+    <li><strong>settings</strong>: global parameters — <code>flattenDepth</code>, <code>pageSize</code>, <code>visibleColumnLimit</code>.</li>
+    <li><strong>datasets</strong>: per-dataset column configuration — visibility, aggregation and column order for each detected column.</li>
+  </ul>
+  <p>
+    If the original JSON is a root-level array (not an object), the exporter wraps it
+    automatically as <code>{ "$JsonTableExplorer": {…}, "$data": […] }</code> so the
+    settings key can coexist with the data. Loading such a file unwraps it transparently.
+  </p>
 
   <h2>Settings</h2>
   <p>
