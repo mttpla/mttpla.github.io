@@ -28,6 +28,11 @@ $(document).ready(function () {
     }
   );
 
+  // Assign left/right alternation globally across all sections
+  $('.each-event').each(function(i) {
+    $(this).addClass(i % 2 === 0 ? 'event-right' : 'event-left');
+  });
+
   var $element = $('.each-event, .title');
   var $window = $(window);
   $window.on('scroll resize', check_for_fade);

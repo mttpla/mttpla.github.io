@@ -1,31 +1,46 @@
-
+/* ── Base ── */
 body {
   background-color: #42a5f5;
   color: white;
 }
+
 h1, h2, h3 {
   font-weight: 300;
 }
 
-a.blueLink{
-    color : #42A5F5;
+a {
+  color: white;
 }
 
+a.blueLink {
+  color: #5b8db8;
+  text-decoration: underline;
+  text-decoration-color: rgba(91, 141, 184, 0.3);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.25s;
+}
+
+a.blueLink:hover {
+  text-decoration-color: rgba(91, 141, 184, 0.85);
+}
+
+/* ── Timeline wrapper ── */
 .wrapper {
-  background-color: #42A5F5;
   width: 100%;
   min-height: 100vh;
-  height: 100%;
-  font: normal 16px/26px Open Sans Condensed, sans-serif;
+  font: normal 16px/26px 'Open Sans Condensed', sans-serif;
   color: #fff;
-  padding: 100px 220px 20px;
+  padding: 20px 220px 20px;
   box-sizing: border-box;
 }
 
+/* ── Timeline section ── */
 .block {
   z-index: 1;
   position: relative;
 }
+
+/* Center vertical line */
 .block:before {
   content: "";
   position: absolute;
@@ -36,15 +51,15 @@ a.blueLink{
   margin-top: 90px;
 }
 
+/* ── Year label ── */
 .title {
-  font: bold 22px/32px Open Sans Condensed, sans-serif;
+  font: bold 22px/32px 'Open Sans Condensed', sans-serif;
   text-align: center;
   padding: 20px;
   transition: all 0.8s ease-in-out;
 }
 
-
-
+/* ── Event card ── */
 .each-event {
   background-color: #f4f4f4;
   color: #777;
@@ -57,6 +72,8 @@ a.blueLink{
   transition: all 0.3s ease-in-out;
   text-align: center;
 }
+
+/* Connector dot */
 .each-event:before {
   content: "";
   position: absolute;
@@ -68,16 +85,21 @@ a.blueLink{
   background-color: #fff;
   box-shadow: 0 4px 20px -4px rgba(64, 64, 64, 0.8);
 }
-.each-event:nth-child(odd) {
+
+/* Zigzag: global alternation assigned via JS */
+.each-event.event-right {
   margin-left: calc(50% + 20px);
 }
-.each-event:nth-child(even) {
+
+.each-event.event-left {
   margin-left: calc(50% - 421px);
 }
-.each-event:nth-child(even):before {
+
+.each-event.event-left:before {
   left: calc(100% + 14px);
 }
 
+/* ── Scroll-based non-focus effect ── */
 .title.non-focus {
   transition: all 0.8s ease-in-out;
 }
@@ -89,60 +111,29 @@ a.blueLink{
   transform: rotateZ(45deg);
   transition: all 0.8s ease-in-out;
 }
+
 .each-event.non-focus:before {
   opacity: 0;
   background-color: #aaa;
 }
 
-
-
-
-h1 {
-  position: absolute;
-  top: 5px;
-  left: 180px;
-}
-h3 {
-  position: absolute;
-  top: 50px;
-  left: 180px;
-}
-div.CV {
-  position: absolute;
-  top: 100px;
-  left: 180px;
-}
-div.me {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 100px;
-  height: 100px;
-  border-radius: 5px;
-  border: 10px solid white;
-  padding: 10px;
-}
-div.myLinkGroup {
+/* ── Company logos: uniform height, preserve aspect ratio ── */
+.company-logo {
+  height: 64px;
+  width: auto;
+  max-width: 300px;
   display: inline-block;
-  position: absolute;
-  top: 20px;
-  left: calc(100% - 100px);
-  width: 50px;
-  height: 200px;
-  border-radius: 5px;
-  border: 10px solid white;
-  padding: 10px;
-  text-align: center;
-}
-div.myLinkItem {
-  padding-bottom: 25px;
-}
-img.myPic {
-  height: 100px;
-  width: 100px;
 }
 
-div.lastLine {
+/* Elba photo is portrait — different treatment */
+img.elba {
+  width: 180px;
+  height: auto;
+  display: inline-block;
+}
+
+/* ── Footer ── */
+.lastLine {
   padding: 10px;
   padding-top: 60px;
   position: relative;
@@ -150,11 +141,7 @@ div.lastLine {
   width: 100%;
   font-weight: bold;
 }
-a {
-  color: white;
-}
-div.inline {
+
+.inline {
   display: inline-block;
 }
-
-

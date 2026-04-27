@@ -1,254 +1,263 @@
 <!DOCTYPE html>
 <!-- Copyright 2016 - Matteo Paoli, mttpla@gmail.com -->
-<html >
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="./css/matteopaoli-it.css">
-    <link rel="stylesheet" href="./css/fontawesome-free-6.5.1-web/css/fontawesome.min.css">
-    <link rel="stylesheet" href="./css/fontawesome-free-6.5.1-web/css/brands.min.css">
-     <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-     
-	<script language="JavaScript" type="text/JavaScript"
-    	src="js/matteopaoli-it.js"></script>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Matteo Paoli</title>
 
-<title>Matteo Paoli: web site</title>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7FK252F46P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <!-- Open Sans Condensed (was referenced in CSS but never loaded) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300;700&display=swap" rel="stylesheet">
 
-  gtag('config', 'G-7FK252F46P');
-</script>
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="./css/fontawesome-free-6.5.1-web/css/fontawesome.min.css">
+  <link rel="stylesheet" href="./css/fontawesome-free-6.5.1-web/css/brands.min.css">
+
+  <!-- Site styles (base, timeline, scroll animations) -->
+  <link rel="stylesheet" href="./css/matteopaoli-it.css">
+
+  <!-- Tailwind Play CDN — preflight disabled, base styles owned by matteopaoli-it.css -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { corePlugins: { preflight: false } };</script>
+
+  <!-- jQuery + site JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="js/matteopaoli-it.js"></script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7FK252F46P"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7FK252F46P');
+  </script>
 </head>
 <body id="body">
 
-<h1>Matteo Paoli</h1>
-<h3>mttpla</h3> 
-<a href="https://drive.google.com/file/d/1xiEhdRLM1Z1NnIx6-SILX1uICw32XUEq/view?usp=sharing" target="_blank">
-<div class="CV" >
-  <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
-   My CV 
-</div>
-</a>
+<!-- ── Hero (frosted glass) ── -->
+<div class="px-6 py-6 md:px-20 lg:px-56">
+  <header class="flex items-stretch gap-7 px-8 py-7 rounded-xl"
+          style="background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.28); backdrop-filter: blur(8px);">
 
-<div class="me">
-<img id="myPic" class="myPic" src="./imgs/me/matteopaoli2022-06.jpg" alt="Matteo Paoli" /> 
-</div>
+    <!-- Photo: full-height, width fixed, stretches to match text column -->
+    <div class="shrink-0 w-28 rounded-xl border-4 border-white overflow-hidden">
+      <img id="myPic"
+           class="w-full h-full object-cover"
+           src="./imgs/me/matteopaoli2022-06.jpg"
+           alt="Matteo Paoli" />
+    </div>
 
-<div class="myLinkGroup">
-  <div class="myLinkItem">
-    <a href="https://it.linkedin.com/in/matteo-paoli-6014524" target="_blank"><i class="fa-brands fa-linkedin fa-3x" aria-hidden="true"></i></a>
-  </div>
-  <div class="myLinkItem">
-    <a href="https://github.com/mttpla" target="_blank"><i class="fa-brands fa-github fa-3x" aria-hidden="true"></i></a>
-  </div>
-  <div class="myLinkItem">
-    <a href="https://www.medium.com/@mttpla" target="_blank"><i class="fa-brands fa-medium fa-2x" aria-hidden="true"></i></a>
-  </div>
-  </div>
+    <!-- Name / subtitle / CV / social -->
+    <div class="flex flex-col gap-0 text-white">
+      <h1 class="text-4xl font-light leading-tight">Matteo Paoli</h1>
+      <p class="text-lg opacity-75 font-light tracking-wide">mttpla</p>
 
-<div class="wrapper">
-<section class="block">
-  <div class="title">2020 - current</div>
-  <div class="each-event">
-    <div class="title">
-      <a class="blueLink" href="./JsonTableExplorer/index.html">JSON Table Explorer</a>
-    </div>
-    <div class="event-description">
-      A simple browser JSON tool, 100% client-side, built with Codex v0.114 + GPT-5.4
-    </div>
-  </div>  
-  <div class="each-event">
-    <div class="title">
-      Article:  <a class="blueLink" href="https://medium.com/@mttpla/using-obsidian-as-an-adr-tool-5f63d187de6b" target="_blank">Using Obsidian as an ADR Tool</a>
-    </div>
-    <div class="event-description">
-        <img class="medium_adr_article" alt="medium article Obsidian" src="./imgs/logos/medium.png" width="280" >
-    </div>
-  </div>  
-  <div class="each-event">
-    <div class="title">
-      Solutions Architect at
-    </div>
-    <div class="event-description">
-      <a href="https://www.adesso.it" target="_blank">
-  <img class="adesso" alt="adesso: agile software development. Tailor-made application software development by applying modern architectural patterns, state-of-the-art technologies, and Agile project management methods" src="./imgs/logos/adessose_logo.png" width="280" >
+      <a href="https://drive.google.com/file/d/1xiEhdRLM1Z1NnIx6-SILX1uICw32XUEq/view?usp=sharing"
+         target="_blank"
+         class="inline-flex items-center gap-2 text-base opacity-80 hover:opacity-100 transition-opacity">
+        <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+        My CV
       </a>
+
+      <!-- Social links -->
+      <div class="flex items-center gap-5 mt-1">
+        <a href="https://it.linkedin.com/in/matteo-paoli-6014524" target="_blank"
+           class="opacity-70 hover:opacity-100 transition-opacity" aria-label="LinkedIn">
+          <i class="fa-brands fa-linkedin fa-2x" aria-hidden="true"></i>
+        </a>
+        <a href="https://github.com/mttpla" target="_blank"
+           class="opacity-70 hover:opacity-100 transition-opacity" aria-label="GitHub">
+          <i class="fa-brands fa-github fa-2x" aria-hidden="true"></i>
+        </a>
+        <a href="https://www.medium.com/@mttpla" target="_blank"
+           class="opacity-70 hover:opacity-100 transition-opacity" aria-label="Medium">
+          <i class="fa-brands fa-medium fa-2x" aria-hidden="true"></i>
+        </a>
+      </div>
     </div>
-  </div>
+
+  </header>
+</div>
+
+<!-- ── Timeline ── -->
+<div class="wrapper">
+
+  <section class="block">
+    <div class="title">2020 - current</div>
+
     <div class="each-event">
       <div class="title">
-        CTO at
+        <a class="blueLink" href="./JsonTableExplorer/index.html">JSON Table Explorer</a>
       </div>
       <div class="event-description">
+        A simple browser JSON tool, 100% client-side, built with Codex v0.114 + GPT-5.4
+      </div>
+    </div>
+
+    <div class="each-event">
+      <div class="title">
+        Article: <a class="blueLink" href="https://medium.com/@mttpla/using-obsidian-as-an-adr-tool-5f63d187de6b" target="_blank">Using Obsidian as an ADR Tool</a>
+      </div>
+    </div>
+
+    <div class="each-event">
+      <div class="title">Solutions Architect at</div>
+      <div class="event-description">
+        <a href="https://www.adesso.it" target="_blank">
+          <img class="company-logo" alt="adesso SE — agile software development" src="./imgs/logos/adessose_logo.png" loading="lazy">
+        </a>
+      </div>
+    </div>
+
+    <div class="each-event">
+      <div class="title">CTO at</div>
+      <div class="event-description">
         <a href="https://www.mela.work" target="_blank">
-    <img class="mela" alt="mela: track your work and keep construction and maintenance costs in check" src="./imgs/logos/melaLogo.svg" width="200" height="100" >
+          <img class="company-logo" alt="Mela — track your work and keep construction costs in check" src="./imgs/logos/melaLogo.svg" loading="lazy">
         </a>
       </div>
     </div>
 
   </section>
-  <section class="block"> 
-  <div class="title">2011-2019</div>
-  <div class="each-event">
-      <div class="title">
-        Conference Paper 
-      </div>
+
+  <section class="block">
+    <div class="title">2011-2019</div>
+
+    <div class="each-event">
+      <div class="title">Conference Paper</div>
       <div class="event-description">
-         Ultra-wide Band Positioning in Sport. In: International Journal of Wireless Information Networks.
-          <a class="blueLink" href="https://link.springer.com/article/10.1007/s10776-019-00470-7" target="_blank">link</a>
+        Ultra-wide Band Positioning in Sport. In: International Journal of Wireless Information Networks.
+        <a class="blueLink" href="https://link.springer.com/article/10.1007/s10776-019-00470-7" target="_blank">link</a>
       </div>
     </div>
-  <div class="each-event">
-      <div class="title">
-        CEO at
-      </div>
+
+    <div class="each-event">
+      <div class="title">CEO at</div>
       <div class="event-description">
         <a href="http://www.tracking4fun.com" target="_blank">
-      <img class="t4f" alt="t4f" src="./imgs/logos/T4F.png" width="200" height="100" >
+          <img class="company-logo" alt="Tracking4Fun" src="./imgs/logos/T4F.png" loading="lazy">
         </a>
       </div>
     </div>
+
     <div class="each-event">
-      <div class="title">
-        Inventor of Patent
-      </div>
+      <div class="title">Inventor of Patent</div>
       <div class="event-description">
         Fluid sensor/plant machinery monitoring system interface complex and method.
         <a class="blueLink" href="https://patents.google.com/patent/US20180364212A1" target="_blank">US20180364212A1</a>
       </div>
     </div>
-   
+
     <div class="each-event">
-      <div class="title">
-        Inventor of Patent
-      </div>
+      <div class="title">Inventor of Patent</div>
       <div class="event-description">
         System and Method about individual tracking.
         <a class="blueLink" href="https://patents.google.com/patent/IT201700062080A1" target="_blank">IT201700062080A1</a>
       </div>
     </div>
-    
-    <div class="each-event">
-      <div class="title">
-        Speaker at
-      </div>
-      <div class="event-description">
- <a class="blueLink" href="https://conference.reliableplant.com/">Reliable Plant 2017, Conference and Exibition</a> run by <a  class="blueLink" href="https://www.noria.com">Noria</a> , in USA. Topics: lubrication, oil analysis and reliability professionals. 
-<div>Speech title: “Innovative Sampling Technology and Best Practice“</div>
-  </div>
-    </div>
 
     <div class="each-event">
-      <div class="title">
-        Developed 
-      </div>
+      <div class="title">Speaker at</div>
       <div class="event-description">
-         <a href="http://www.mecoil.net/monitoil-online-machine-tutor/" target="_blank">
-      <img class="monitoilLogo" alt="Monitoil" src="./imgs/logos/Monitoil-OMT.png" width="200" height="100">
-    </a>
-    </a>
-      </div>
-    </div>
-    
-  </div>
-</section>
-<section class="block">
-  <div class="each-year">
-  <div class="title">2001 - 2010</div>
-  <div class="each-event">
-      <div class="title">
-        Course on
-      </div>
-      <div class="event-description">
-  Innovative approaches for reliability, availability, maintenance and diagnosis of industrial plant and system.
-  <div>
-  <img class="politecnicoLogo" alt="Politecnico" src="./imgs/logos/politecnico.png" width="200" height="200">
-</div>
- </div>
-    </div>
-    <div class="each-event">
-      <div class="title">
-        Developed 
-      </div>
-      <div class="event-description">
-         <a href="https://www.mecoil.net/analisi-olio/permantenere/" target="_blank">
-      <img class="permantenereLogo" alt="Permantenere" src="./imgs/logos/Permantenere.png" width="200" height="60">
-    </a>
+        <a class="blueLink" href="https://conference.reliableplant.com/">Reliable Plant 2017, Conference and Exhibition</a> run by <a class="blueLink" href="https://www.noria.com">Noria</a>, in USA. Topics: lubrication, oil analysis and reliability professionals.
+        <div>Speech title: "Innovative Sampling Technology and Best Practice"</div>
       </div>
     </div>
 
     <div class="each-event">
-      <div class="title">
-        Conference Paper 
-      </div>
+      <div class="title">Developed</div>
       <div class="event-description">
-        Security analiysis of IEEE 802.16 In: Communications, 2007 IEEE International Conference.
+        <a href="http://www.mecoil.net/monitoil-online-machine-tutor/" target="_blank">
+          <img class="company-logo" alt="Monitoil" src="./imgs/logos/Monitoil-OMT.png" loading="lazy">
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="block">
+    <div class="title">2001 - 2010</div>
+
+    <div class="each-event">
+      <div class="title">Course on</div>
+      <div class="event-description">
+        Innovative approaches for reliability, availability, maintenance and diagnosis of industrial plant and system.
+        <div>
+          <img class="company-logo" alt="Politecnico di Milano" src="./imgs/logos/politecnico.png" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+    <div class="each-event">
+      <div class="title">Developed</div>
+      <div class="event-description">
+        <a href="https://www.mecoil.net/analisi-olio/permantenere/" target="_blank">
+          <img class="company-logo" alt="Permantenere" src="./imgs/logos/Permantenere.png" loading="lazy">
+        </a>
+      </div>
+    </div>
+
+    <div class="each-event">
+      <div class="title">Conference Paper</div>
+      <div class="event-description">
+        Security analysis of IEEE 802.16. In: Communications, 2007 IEEE International Conference.
         <a class="blueLink" href="https://ieeexplore.ieee.org/document/4288868" target="_blank">IEEE Xplore</a>
       </div>
     </div>
 
-
     <div class="each-event">
-      <div class="title">
-        Hired at 
-      </div>
+      <div class="title">Hired at</div>
       <div class="event-description">
         <a href="http://www.mecoil.net" target="_blank">
-      <img class="mecoilLogo" alt="Mecoil Diagnosi Meccaniche" src="./imgs/logos/Mecoil.png" width="200" height="100">
-    </a>
+          <img class="company-logo" alt="Mecoil Diagnosi Meccaniche" src="./imgs/logos/Mecoil.png" loading="lazy">
+        </a>
       </div>
     </div>
+
     <div class="each-event">
-      <div class="title">
-        Studied at 
-      </div>
+      <div class="title">Studied at</div>
       <div class="event-description">
-      <img class="unifiLogo" alt="Unifi" src="./imgs/logos/unifi-ing.png" width="200" height="100">
-      <div>
-      Title of qualification awarded: Master degree in computer science engineering (ISCED 5A).</div>
+        <img class="company-logo" alt="Università degli Studi di Firenze — Ingegneria" src="./imgs/logos/unifi-ing.png" loading="lazy">
+        <div>Master degree in computer science engineering (ISCED 5A).</div>
       </div>
     </div>
-  </div>
-</section>
-<section class="block">
-  <div class="title">1979</div>
-  <div> </div>
-  <div class="each-event">
-      <div class="title">
-        Born in
-      </div>
+
+  </section>
+
+  <section class="block">
+    <div class="title">1979</div>
+
+    <div class="each-event">
+      <div class="title">Born in</div>
       <div class="event-description">
-        <img class="elba" alt="Isola d'elba" src="./imgs/logos/elba.jpg" width="180" height="240">
-      <div>  
-        <a class="blueLink" href="https://en.wikipedia.org/wiki/Elba">Elba Island</a>
+        <img class="elba" alt="Isola d'Elba" src="./imgs/logos/elba.jpg">
+        <div>
+          <a class="blueLink" href="https://en.wikipedia.org/wiki/Elba">Elba Island</a>
+        </div>
       </div>
-  </div>    
- </section>        
-</div>
+    </div>
 
-</div>
+  </section>
 
+</div><!-- /.wrapper -->
 
+<!-- ── Footer ── -->
 <div class="lastLine inline">
-<script>
-  var year = new Date().getFullYear();
-  document.write("<div class=\"copyright\">Copyright 2016 - "+ year + " Matteo Paoli</div>");
-</script>
-
-<div class="lastUpdate">
-	Last updated: <div class="lastdate inline"></div> - 
-  <a id="lasthtmlurl" target="_blank">
-	 <div class="lastcommit inline"></div>
-  </a>
+  <script>
+    var year = new Date().getFullYear();
+    document.write('<div class="copyright">Copyright 2016 \u2013 ' + year + ' Matteo Paoli</div>');
+  </script>
+  <div class="lastUpdate">
+    Last updated: <div class="lastdate inline"></div> -
+    <a id="lasthtmlurl" target="_blank">
+      <div class="lastcommit inline"></div>
+    </a>
+  </div>
 </div>
-</div>
-
-
-
 
 </body>
 </html>
