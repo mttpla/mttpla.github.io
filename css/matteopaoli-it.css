@@ -145,3 +145,46 @@ img.elba {
 .inline {
   display: inline-block;
 }
+
+/* ── Mobile (< 768px): single column timeline ── */
+@media (max-width: 767px) {
+
+  .wrapper {
+    padding: 20px 16px 20px 48px;
+  }
+
+  /* Line moves to the left */
+  .block:before {
+    left: 8px;
+    margin-top: 60px;
+  }
+
+  /* Cards: full width, anchored to the left line */
+  .each-event,
+  .each-event.event-right,
+  .each-event.event-left {
+    width: auto;
+    margin-left: 24px;
+    margin-right: 0;
+    margin-top: 32px;
+    margin-bottom: 32px;
+  }
+
+  /* Dot always on the left */
+  .each-event:before,
+  .each-event.event-left:before {
+    left: -27px;
+  }
+
+  /* No rotation on mobile — too disorienting on small screens */
+  .each-event.non-focus {
+    transform: none;
+    margin-top: 32px;
+  }
+
+  /* Year label left-aligned */
+  .title {
+    text-align: left;
+    padding: 16px 0 8px 0;
+  }
+}
