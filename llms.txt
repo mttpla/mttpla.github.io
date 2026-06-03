@@ -1,0 +1,59 @@
+# Matteo Paoli
+
+> Software engineer, Solutions Architect, CTO, patent inventor, and conference speaker. Born 1979 on Elba Island, Italy. Based in Italy.
+
+## Identity
+
+- Full name: Matteo Paoli
+- Handle: mttpla
+- Email: mttpla@gmail.com
+- Website: https://matteopaoli.it
+- LinkedIn: https://it.linkedin.com/in/matteo-paoli-6014524
+- GitHub: https://github.com/mttpla
+- Medium: https://medium.com/@mttpla
+
+## Current Roles (2020 – present)
+
+- **Solutions Architect** at [adesso SE](https://www.adesso.it) — agile software development consultancy
+- **CTO** at [Mela](https://www.mela.work) — construction cost tracking SaaS
+
+## Career Timeline
+
+### 2020 – present
+- Built [JSON Table Explorer](https://matteopaoli.it/JsonTableExplorer/) — browser-only tool that converts arbitrary JSON into interactive tables (100% client-side, no server)
+- Published article: [Using Obsidian as an ADR Tool](https://medium.com/@mttpla/using-obsidian-as-an-adr-tool-5f63d187de6b)
+- Solutions Architect at adesso SE
+- CTO at Mela
+
+### 2011 – 2019
+- **CEO** at [Tracking4Fun](http://www.tracking4fun.com) — UWB indoor positioning for sports
+- **Conference Paper**: "Ultra-wide Band Positioning in Sport" — International Journal of Wireless Information Networks (Springer, 2019) — https://link.springer.com/article/10.1007/s10776-019-00470-7
+- **Speaker** at Reliable Plant 2017 Conference & Exhibition (Noria, USA) — Speech: "Innovative Sampling Technology and Best Practice" — topics: lubrication, oil analysis, reliability
+- **Inventor** of US patent US20180364212A1: Fluid sensor/plant machinery monitoring system interface complex and method — https://patents.google.com/patent/US20180364212A1
+- **Inventor** of IT patent IT201700062080A1: System and Method about individual tracking — https://patents.google.com/patent/IT201700062080A1
+- Developed [Monitoil OMT](http://www.mecoil.net/monitoil-online-machine-tutor/) — industrial oil monitoring system
+
+### 2001 – 2010
+- **Course**: Innovative approaches for reliability, availability, maintenance and diagnosis of industrial plants — Politecnico di Milano
+- Developed [Permantenere](https://www.mecoil.net/analisi-olio/permantenere/) — oil analysis platform
+- **Conference Paper**: "Security analysis of IEEE 802.16" — IEEE International Conference on Communications 2007 — https://ieeexplore.ieee.org/document/4288868
+- Software engineer at [Mecoil Diagnosi Meccaniche](http://www.mecoil.net)
+- **Education**: Master degree in Computer Science Engineering (ISCED 5A) — Università degli Studi di Firenze, Facoltà di Ingegneria
+
+### 1979
+- Born on [Elba Island](https://en.wikipedia.org/wiki/Elba), Tuscany, Italy
+
+## Tools Built
+
+- [JSON Table Explorer](https://matteopaoli.it/JsonTableExplorer/): browser-only JSON → interactive paginated/sortable/filterable tables. No server, no install. Supports multi-dataset JSON, column config, CSV export, settings sharing via embedded `$JsonTableExplorer` key.
+
+## Patents
+
+- US20180364212A1 — Fluid sensor/plant machinery monitoring system interface complex and method
+- IT201700062080A1 — System and Method about individual tracking (UWB)
+
+## Publications
+
+- "Ultra-wide Band Positioning in Sport" — Int. Journal of Wireless Information Networks (Springer, 2019)
+- "Security analysis of IEEE 802.16" — IEEE ICC 2007
+- "Using Obsidian as an ADR Tool" — Medium, 2020s
