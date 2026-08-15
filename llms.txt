@@ -20,6 +20,7 @@
 ## Career Timeline
 
 ### 2020 – present
+- Built [AIUsageBar](https://github.com/mttpla/aiusagebar) — macOS menu bar app in Rust that tracks Claude and GitHub Copilot usage quotas (read-only, MIT)
 - Built [JSON Table Explorer](https://matteopaoli.it/JsonTableExplorer/) — browser-only tool that converts arbitrary JSON into interactive tables (100% client-side, no server)
 - Published article: [Using Obsidian as an ADR Tool](https://medium.com/@mttpla/using-obsidian-as-an-adr-tool-5f63d187de6b)
 - Solutions Architect at adesso SE
@@ -45,6 +46,7 @@
 
 ## Tools Built
 
+- [AIUsageBar](https://github.com/mttpla/aiusagebar): macOS menu bar app (Rust 1.75+, macOS 11+, MIT) that monitors AI coding quotas at a glance. Shows Claude Pro/Max rolling windows (5-hour session, 7-day weekly), Claude Enterprise spend budgets, and GitHub Copilot monthly premium quota. Reads Claude credentials from Keychain or local config; Copilot needs a GitHub PAT. Read-only: sends no prompts and never modifies credentials. Tray icon signals status (white brain under 80%, red dot at/above 80%, grey unavailable). Distributed as a pre-compiled binary — no Rust toolchain or Xcode needed.
 - [JSON Table Explorer](https://matteopaoli.it/JsonTableExplorer/): browser-only JSON → interactive paginated/sortable/filterable tables. No server, no install. Supports multi-dataset JSON, column config, CSV export, settings sharing via embedded `$JsonTableExplorer` key.
 
 ## Patents
